@@ -1,0 +1,14 @@
+/library/raw/
+/data/
+curves/*
+!curves/showcase/
+*.wav
+__pycache__/
+*.pyc
+.venv/
+.claude/
+SPEC_PRIVATE.md
+library/cache/
+logs/pip_install.log
+logs/preindex.log
+logs/make_site.log

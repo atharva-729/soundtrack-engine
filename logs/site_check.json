@@ -1,0 +1,80 @@
+{
+ "console_errors": [],
+ "screens": [
+  "find_380_light.png",
+  "song_380_light.png",
+  "find_1280_light.png",
+  "song_1280_light.png",
+  "find_380_dark.png",
+  "song_380_dark.png",
+  "find_1280_dark.png",
+  "song_1280_dark.png"
+ ],
+ "test_tone_result": "ICICI Bank 2023 \u00b7 shape",
+ "playhead": {
+  "audio_time_after_2_5s": 2.48,
+  "seek_value": "12",
+  "moves": true
+ },
+ "blind_test": {
+  "trials": 11,
+  "answers": 11,
+  "score_text": "3 of 11"
+ },
+ "parity": {
+  "python_top5": [
+   [
+    "icicibank_2023_shape",
+    0.1499533280238656
+   ],
+   [
+    "nifty50_2023_shape",
+    0.15886702609730338
+   ],
+   [
+    "infy_2018_shape",
+    0.18233010103279101
+   ],
+   [
+    "nifty50_2024_shape",
+    0.19957586121597576
+   ],
+   [
+    "tcs_2018_shape",
+    0.20134326360526034
+   ]
+  ],
+  "js_top5": [
+   [
+    "icicibank_2023_shape",
+    0.1499532835872647
+   ],
+   [
+    "nifty50_2023_shape",
+    0.15886702647840653
+   ],
+   [
+    "infy_2018_shape",
+    0.18233005932229582
+   ],
+   [
+    "nifty50_2024_shape",
+    0.19957581940720429
+   ],
+   [
+    "tcs_2018_shape",
+    0.20134323039963786
+   ]
+  ],
+  "top5_match": true,
+  "curve_len_py_js": [
+   120,
+   120
+  ],
+  "curve_max_abs_diff": 1.5547817677763476e-06,
+  "t0_py_js": [
+   0.0464,
+   0.0464
+  ]
+ }
+}

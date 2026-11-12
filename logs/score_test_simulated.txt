@@ -1,0 +1,5 @@
+sessions: 20 (SIMULATED)
+group     engine random  ties   win%  95% CI          one-sided binomial p
+overall      130     75    35  63.4%  [56.6, 69.7]   7.46e-05
+rain          66     40    14  62.3%  [52.8, 70.9]   0.00739
+stock         64     35    21  64.6%  [54.8, 73.4]   0.00232

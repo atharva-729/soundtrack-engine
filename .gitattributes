@@ -1,0 +1,11 @@
+*.mp3 binary
+*.bin binary
+*.npz binary
+*.png binary
+*.json text eol=lf
+*.py text eol=lf
+*.js text eol=lf
+*.html text eol=lf
+*.css text eol=lf
+*.md text eol=lf
+*.csv text eol=lf
