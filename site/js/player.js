@@ -87,7 +87,6 @@
       if (b && i !== this.lastStep) {
         const J = this.jumbo, nm = J.querySelectorAll('.nm'), sc = J.querySelectorAll('.sc'), ex = J.querySelectorAll('.ex');
         const set = (el, v) => { v = String(v); if (el.textContent !== v) el.textContent = v; };
-        let wl = 50;
         if (b.kind === 'stock') {
           const p0 = o.aux[0], p = o.aux[i], ch = (p / p0 - 1) * 100, lo = Math.min(...o.aux), hi = Math.max(...o.aux);
           const peak = Math.max(...o.aux.slice(0, i + 1));
@@ -95,16 +94,13 @@
           nm[1].textContent = 'since start'; set(sc[1], (ch >= 0 ? '+' : '') + ch.toFixed(1) + '%'); ex[1].textContent = 'day ' + (i + 1) + ' of ' + o.aux.length;
           J.querySelector('.clk').textContent = b.labels[i];
           J.querySelector('.sub').textContent = 'down ' + (100 * (1 - p / peak)).toFixed(1) + '% from its high so far';
-          wl = 100 * (p - lo) / ((hi - lo) || 1);
         } else if (b.kind === 'rain') {
           const mm = o.aux[i], tot = o.aux.slice(0, i + 1).reduce((a, x) => a + x, 0), mx = Math.max(...o.aux);
           nm[0].textContent = b.name; set(sc[0], mm.toFixed(1)); ex[0].textContent = 'mm this hour';
           nm[1].textContent = 'total so far'; set(sc[1], tot.toFixed(0)); ex[1].textContent = 'mm';
           J.querySelector('.clk').textContent = b.labels[i];
           J.querySelector('.sub').textContent = mm >= 0.6 * mx ? 'downpour' : mm >= 0.25 * mx ? 'heavy rain' : mm > 0.2 ? 'rain' : 'calm';
-          wl = 100 * mm / (mx || 1);
         }
-        J.querySelector('.bl').style.width = wl + '%'; J.querySelector('.br').style.width = (100 - wl) + '%';
         this.lastStep = i;
       }
       this.jumbo.classList.toggle('on', !this.audio.paused);

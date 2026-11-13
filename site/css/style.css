@@ -196,9 +196,6 @@ header.hero > * { margin-left: 0; margin-right: 0; }
 .live { font-size: 10px; font-weight: 900; letter-spacing: .14em; color: #ff4d4d; opacity: 0; }
 .jumbo.on .live { opacity: 1; animation: blink 1.2s steps(2) infinite; }
 @keyframes blink { 50% { opacity: .35; } }
-.jt-bar { display: flex; height: 8px; border-radius: 999px; overflow: hidden; margin-top: 10px; background: #1b2440; }
-.jt-bar i { display: block; height: 100%; transition: width .25s ease-out; }
-.jt-bar .bl { background: #ff8a4c; } .jt-bar .br { background: #3ad1ff; }
 .listen { background: var(--bg2); border-radius: 12px; padding: 10px 14px; font-size: 15px; line-height: 1.4; margin-bottom: 8px; border-left: 4px solid var(--song); min-height: 3.2em; }
 .listen b { color: var(--song); margin-right: 6px; white-space: nowrap; }
 .listen.soon { border-left-color: var(--acc2); }
