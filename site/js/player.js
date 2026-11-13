@@ -86,7 +86,7 @@
       const i = this.stepAt(t), b = o.board;
       if (b && i !== this.lastStep) {
         const J = this.jumbo, nm = J.querySelectorAll('.nm'), sc = J.querySelectorAll('.sc'), ex = J.querySelectorAll('.ex');
-        const set = (el, v) => { v = String(v); if (el.textContent !== v) { el.textContent = v; if (this.lastStep >= 0) { el.classList.add('bump'); setTimeout(() => el.classList.remove('bump'), 260); } } };
+        const set = (el, v) => { v = String(v); if (el.textContent !== v) el.textContent = v; };
         let wl = 50;
         if (b.kind === 'stock') {
           const p0 = o.aux[0], p = o.aux[i], ch = (p / p0 - 1) * 100, lo = Math.min(...o.aux), hi = Math.max(...o.aux);

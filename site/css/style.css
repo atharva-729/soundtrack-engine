@@ -188,8 +188,7 @@ header.hero > * { margin-left: 0; margin-right: 0; }
 .jt-team { display: flex; flex-direction: column; min-width: 0; }
 .jt-team.r { align-items: flex-end; text-align: right; }
 .jt-team .nm { font-size: 13px; font-weight: 900; letter-spacing: .08em; text-transform: uppercase; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 100%; }
-.jt-team .sc { font-size: clamp(28px, 6vw, 44px); font-weight: 900; line-height: 1; color: #ffd23f; font-variant-numeric: tabular-nums; text-shadow: 0 0 18px rgba(255,210,63,.45); transition: transform .2s; }
-.jt-team .sc.bump { transform: scale(1.18); }
+.jt-team .sc { font-size: clamp(28px, 6vw, 44px); font-weight: 900; line-height: 1; color: #ffd23f; font-variant-numeric: tabular-nums; text-shadow: 0 0 18px rgba(255,210,63,.45); }
 .jt-team .ex { font-size: 12px; color: #8d99b3; min-height: 1.2em; }
 .jt-mid { text-align: center; display: flex; flex-direction: column; align-items: center; gap: 2px; }
 .jt-mid .clk { font-size: 16px; font-weight: 900; letter-spacing: .06em; font-variant-numeric: tabular-nums; white-space: nowrap; }
