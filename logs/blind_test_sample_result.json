@@ -1,32 +1,8 @@
 {
  "test": "soundtrack-engine-blind-v1",
- "when": "2026-11-12T10:23:55.417Z",
+ "when": "2026-11-13T08:55:09.712Z",
  "n": 11,
  "answers": [
-  {
-   "trial": "rain_kochi_2018",
-   "source": "rain",
-   "engine_was": "A",
-   "answer": "A",
-   "choice": "engine",
-   "heard_both": true
-  },
-  {
-   "trial": "adanient_2023q1_drama",
-   "source": "stock",
-   "engine_was": "A",
-   "answer": "B",
-   "choice": "random",
-   "heard_both": true
-  },
-  {
-   "trial": "rain_mumbai_2005",
-   "source": "rain",
-   "engine_was": "B",
-   "answer": "tie",
-   "choice": "tie",
-   "heard_both": true
-  },
   {
    "trial": "infy_2019_20_drama",
    "source": "stock",
@@ -38,15 +14,15 @@
   {
    "trial": "rain_delhi_2023",
    "source": "rain",
-   "engine_was": "A",
+   "engine_was": "B",
    "answer": "B",
-   "choice": "random",
+   "choice": "engine",
    "heard_both": true
   },
   {
-   "trial": "reliance_2008_drama",
+   "trial": "nifty_covid_drama",
    "source": "stock",
-   "engine_was": "B",
+   "engine_was": "A",
    "answer": "tie",
    "choice": "tie",
    "heard_both": true
@@ -54,13 +30,13 @@
   {
    "trial": "rain_chennai_2015",
    "source": "rain",
-   "engine_was": "B",
+   "engine_was": "A",
    "answer": "A",
-   "choice": "random",
+   "choice": "engine",
    "heard_both": true
   },
   {
-   "trial": "nifty_covid_drama",
+   "trial": "hdfcbank_last12_shape",
    "source": "stock",
    "engine_was": "B",
    "answer": "B",
@@ -68,7 +44,31 @@
    "heard_both": true
   },
   {
-   "trial": "hdfcbank_last12_shape",
+   "trial": "rain_mumbai_2005",
+   "source": "rain",
+   "engine_was": "A",
+   "answer": "tie",
+   "choice": "tie",
+   "heard_both": true
+  },
+  {
+   "trial": "reliance_2008_drama",
+   "source": "stock",
+   "engine_was": "A",
+   "answer": "A",
+   "choice": "engine",
+   "heard_both": true
+  },
+  {
+   "trial": "rain_kochi_2018",
+   "source": "rain",
+   "engine_was": "A",
+   "answer": "B",
+   "choice": "random",
+   "heard_both": true
+  },
+  {
+   "trial": "reliance_last12_shape",
    "source": "stock",
    "engine_was": "A",
    "answer": "tie",
@@ -76,7 +76,7 @@
    "heard_both": true
   },
   {
-   "trial": "tcs_last12_shape",
+   "trial": "adanient_2023q1_drama",
    "source": "stock",
    "engine_was": "B",
    "answer": "A",
@@ -84,11 +84,11 @@
    "heard_both": true
   },
   {
-   "trial": "reliance_last12_shape",
+   "trial": "tcs_last12_shape",
    "source": "stock",
-   "engine_was": "B",
+   "engine_was": "A",
    "answer": "B",
-   "choice": "engine",
+   "choice": "random",
    "heard_both": true
   }
  ]

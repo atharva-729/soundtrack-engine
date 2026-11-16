@@ -1,25 +1,33 @@
 {
  "console_errors": [],
  "screens": [
+  "catalog_380_light.png",
   "find_380_light.png",
   "song_380_light.png",
+  "catalog_1280_light.png",
   "find_1280_light.png",
   "song_1280_light.png",
+  "catalog_380_dark.png",
   "find_380_dark.png",
   "song_380_dark.png",
+  "catalog_1280_dark.png",
   "find_1280_dark.png",
   "song_1280_dark.png"
  ],
  "test_tone_result": "ICICI Bank 2023 \u00b7 shape",
  "playhead": {
-  "audio_time_after_2_5s": 2.48,
-  "seek_value": "12",
+  "audio_time_after_2_5s": 2.47,
+  "seek_value": "82",
   "moves": true
+ },
+ "short_clip": {
+  "len": "30",
+  "duration": 30
  },
  "blind_test": {
   "trials": 11,
   "answers": 11,
-  "score_text": "3 of 11"
+  "score_text": "4 of 11"
  },
  "parity": {
   "python_top5": [

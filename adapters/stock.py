@@ -37,7 +37,8 @@ def fmt_pct(x):
     return f"{'+' if x >= 0 else '−'}{abs(x) * 100:.1f}%"
 
 
-def period_curves(sym, start, end, cid, title, tag="stock"):
+def _window(sym, start, end):
+    """Closes, daily returns and the two drama ingredients for one period."""
     full = load(sym)
     # compute volatility with 10 days of look-back before the window
     s = full[(full.index >= pd.Timestamp(start) - pd.Timedelta(days=30)) & (full.index <= end)]
@@ -45,6 +46,34 @@ def period_curves(sym, start, end, cid, title, tag="stock"):
     vol = ret.rolling(10, min_periods=3).std()
     win = (s.index >= start)
     s, ret, vol = s[win], ret[win], vol[win]
+    price = s.values
+    vol_norm = curves.rescale01(vol.fillna(0).values) if len(s) else np.zeros(0)
+    dd = 1 - price / np.maximum.accumulate(price) if len(s) else np.zeros(0)
+    return s, ret, vol_norm, dd
+
+
+def explain(c):
+    """How the tension of a saved stock curve is built, for the site's step-by-step chart."""
+    m = c["meta"]
+    price = c["aux"]["price"]
+    inp = {"label": "Daily close", "unit": "₹", "values": price}
+    if m.get("kind") == "shape":
+        return {"input": inp, "parts": [],
+                "formula": "tension = the closing price itself (log scale), rescaled to 0–1"}
+    s, _, vol_norm, dd = _window(m["symbol"], m["start"], m["end"])
+    check = curves.rescale01(0.6 * vol_norm + 0.4 * dd)
+    v = np.array([st["v"] for st in c["steps"]])
+    assert len(check) == len(v) and np.abs(check - v).max() < 1e-3, c["id"]
+    return {"input": inp,
+            "parts": [{"label": "Swings", "help": "how much the price jumps day to day (10-day volatility, 0–1)",
+                       "weight": 0.6, "fmt": "x", "values": [round(float(x), 4) for x in vol_norm]},
+                      {"label": "Drop from high", "help": "how far below its best close so far",
+                       "weight": 0.4, "fmt": "pct", "values": [round(float(x), 4) for x in dd]}],
+            "formula": "tension = 0.6 × swings + 0.4 × drop from high, rescaled to 0–1"}
+
+
+def period_curves(sym, start, end, cid, title, tag="stock"):
+    s, ret, vol_norm, dd = _window(sym, start, end)
     if len(s) < 20:
         return []
     price = s.values
@@ -53,8 +82,6 @@ def period_curves(sym, start, end, cid, title, tag="stock"):
     name = NAMES.get(sym, sym.upper())
 
     shape = curves.rescale01(np.log(price))
-    vol_norm = curves.rescale01(vol.fillna(0).values)
-    dd = 1 - price / np.maximum.accumulate(price)
     drama = curves.rescale01(0.6 * vol_norm + 0.4 * dd)
 
     r = ret.fillna(0).values

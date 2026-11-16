@@ -12,3 +12,4 @@ library/cache/
 logs/pip_install.log
 logs/preindex.log
 logs/make_site.log
+/notes/

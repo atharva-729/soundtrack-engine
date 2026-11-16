@@ -202,3 +202,46 @@ header.hero > * { margin-left: 0; margin-right: 0; }
 .listen.now { border-left-color: var(--acc2); background: color-mix(in srgb, var(--acc2) 25%, var(--bg2)); font-weight: 700; }
 .listen .cd { font-variant-numeric: tabular-nums; font-weight: 900; color: var(--acc2); }
 @media (max-width: 520px) { .jt-team .nm { font-size: 11px; } .jt-mid .clk { font-size: 13px; } .listen { font-size: 13.5px; } }
+
+/* ---------- catalog of examples ---------- */
+.cat-bar { display: flex; gap: 12px; align-items: center; flex-wrap: wrap; margin-bottom: 6px; }
+.chips { display: flex; gap: 6px; flex-wrap: wrap; align-items: center; }
+.chips-lab { font-size: 12px; font-weight: 800; letter-spacing: .1em; text-transform: uppercase; color: var(--mut); margin-right: 2px; }
+.chip { font-size: 12.5px; font-weight: 700; border-radius: 999px; padding: 4px 11px; background: var(--bg2); color: var(--mut); border: 0; }
+button.chip { cursor: pointer; }
+button.chip.on { background: var(--fg); color: var(--bg); }
+.chip.src { background: color-mix(in srgb, var(--data) 16%, var(--bg2)); color: var(--data); }
+.chip.shape { background: color-mix(in srgb, var(--song) 14%, var(--bg2)); color: var(--song); }
+.cat-note { color: var(--mut); font-size: 14px; margin: 4px 0 14px; }
+.k-raw { font-weight: 800; color: var(--fg); } .k-ten { font-weight: 800; color: var(--data); }
+.cards { display: grid; grid-template-columns: repeat(auto-fill, minmax(230px, 1fr)); gap: 14px; }
+.card { display: flex; flex-direction: column; text-decoration: none; color: inherit; background: var(--bg2); border-radius: 14px;
+  overflow: hidden; transition: transform .15s, box-shadow .15s; }
+.card:hover, .card:focus-visible { transform: translateY(-2px); box-shadow: 0 0 0 2px var(--song), var(--shadow); outline: none; }
+.card .thumb { width: 100%; height: 96px; background: var(--card); border-bottom: 1px solid var(--line); cursor: pointer; }
+.c-body { padding: 10px 12px 12px; display: flex; flex-direction: column; gap: 4px; flex: 1; }
+.c-chips { display: flex; gap: 5px; flex-wrap: wrap; }
+.card h3 { margin: 2px 0 0; font-size: 16px; line-height: 1.25; font-weight: 800; }
+.c-sub { margin: 0; color: var(--mut); font-size: 13px; }
+.c-top { margin: auto 0 0; padding-top: 4px; font-size: 13px; font-weight: 700; color: var(--song); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.empty { color: var(--mut); }
+
+/* ---------- detail view ---------- */
+.back { display: inline-block; font-weight: 800; text-decoration: none; margin-bottom: 8px; }
+.d-chips { display: flex; gap: 6px; }
+.d-head .item-title { margin: 6px 0 2px; }
+.d-sub { margin: 0 0 12px; color: var(--mut); }
+.len-row { gap: 12px; }
+.len-note { color: var(--mut); font-size: 13.5px; flex: 1 1 260px; }
+#len button { font-weight: 800; }
+
+/* ---------- raw -> ingredients -> tension ---------- */
+.charts.has-explain canvas.c-data { height: 112px; }
+canvas.c-part { height: 52px; border-top: 1px dashed var(--line); }
+.formula { margin: 2px 0 4px; padding: 6px 12px; border-radius: 10px; font-size: 13.5px;
+  background: color-mix(in srgb, var(--data) 10%, var(--bg2)); color: var(--fg); }
+.formula .arr { color: var(--data); font-weight: 900; margin-right: 4px; }
+.formula b { font-weight: 700; }
+@media (max-width: 520px) { .cards { grid-template-columns: 1fr 1fr; gap: 10px; } .card h3 { font-size: 14px; } .card .thumb { height: 72px; } .c-top { font-size: 12px; } }
+
+[hidden] { display: none !important; }

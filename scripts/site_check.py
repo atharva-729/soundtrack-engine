@@ -1,5 +1,5 @@
 """Checkpoints 6 + 7 with a headless browser (the machine's Edge via Playwright):
-screenshots (380 / 1280 px, light / dark, both tabs), console errors, playhead moves, test-tone upload works,
+screenshots (380 / 1280 px, light / dark: catalog, detail, song tab), console errors, playhead moves, test-tone upload works,
 Python/JS parity (energy curve + top-5 reverse matches), blind test page end to end.
 """
 import functools
@@ -59,6 +59,12 @@ def main():
                 pg.on("console", lambda m: m.type == "error" and report["console_errors"].append(m.text))
                 pg.on("pageerror", lambda e: report["console_errors"].append(str(e)))
                 pg.goto(base + "/index.html")
+                pg.wait_for_selector(".card", timeout=30000)
+                pg.wait_for_timeout(600)
+                f = SHOTS / f"catalog_{w}_{scheme}.png"
+                pg.screenshot(path=str(f), full_page=True)
+                report["screens"].append(f.name)
+                pg.click(".card >> nth=0")
                 pg.wait_for_selector("#tracks li", timeout=30000)
                 pg.wait_for_timeout(600)
                 f = SHOTS / f"find_{w}_{scheme}.png"
@@ -80,7 +86,10 @@ def main():
                     t1 = pg.evaluate("document.querySelector('#player-find audio').currentTime")
                     seek = pg.evaluate("document.querySelector('#player-find .seek').value")
                     report["playhead"] = {"audio_time_after_2_5s": round(t1, 2), "seek_value": seek, "moves": t1 > 0.5}
-                    # stitched mode
+                    report["short_clip"] = {"len": pg.evaluate("document.querySelector('#len .on').dataset.len"),
+                                            "duration": round(pg.evaluate("document.querySelector('#player-find audio').duration"), 2)}
+                    # stitched mode (full-length view)
+                    pg.click("#len [data-len=full]")
                     pg.click("#mode [data-mode=stitched]")
                     pg.wait_for_timeout(500)
                     pg.screenshot(path=str(SHOTS / "find_stitched_1280_dark.png"), full_page=True)

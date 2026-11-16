@@ -6,7 +6,9 @@
     stock: 'Data: NSE daily closes via the open-source EOD2 dataset',
     rain: 'Data: Open-Meteo.com (CC BY 4.0), ERA5 reanalysis',
   };
-  const S = { showcase: null, lib: null, calib: null, hosted: null, idx: null, source: 'stock', item: null, mode: 'single', sel: 0 };
+  const SRC_NAME = { stock: 'Stocks', rain: 'Rain' };
+  const S = { showcase: null, lib: null, calib: null, hosted: null, idx: null, item: null, len: '30', mode: 'single', sel: 0,
+    fSrc: '', fShape: '' };
   const pFind = new Player($('#player-find'));
   let pSong = null;
 
@@ -17,7 +19,8 @@
         const on = o === b; o.setAttribute('aria-selected', on);
         document.getElementById(o.getAttribute('aria-controls')).hidden = !on;
       }
-      if (b.id === 'tab-song' && !pSong) pSong = new Player($('#player-song'));
+      if (b.id === 'tab-song') { pFind.audio.pause(); if (!pSong) pSong = new Player($('#player-song')); }
+      else if (pSong) pSong.audio.pause();
     };
   }
   function segOn(group, btn) { for (const x of group.querySelectorAll('button')) x.classList.toggle('on', x === btn); }
@@ -43,23 +46,130 @@
       moments: meta.moments[i].map(([f, label]) => ({ f, label })) };
   }
 
-  // ---------------------------------------------------------------- tab 1: data -> song
-  function fillItems() {
-    const sel = $('#item');
-    sel.innerHTML = '';
-    for (const it of S.showcase.filter(x => x.source === S.source)) {
-      const o = document.createElement('option'); o.value = it.id; o.textContent = it.title; sel.appendChild(o);
+  // ---------------------------------------------------------------- tab 1: catalog of examples
+  const MON = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+  const dmy = iso => { const [y, m, d] = iso.split('-').map(Number); return { y, m: MON[m - 1], d }; };
+  function title(it) {
+    if (it.source === 'rain') {
+      const a = dmy(it.meta.start), b = dmy(it.meta.end);
+      return `${it.meta.city} rain, ${a.d}${a.m !== b.m ? ' ' + a.m : ''}–${b.d} ${b.m} ${b.y}`;
     }
-    showItem(S.showcase.find(x => x.id === sel.value));
+    return it.title.replace(/ · (drama|shape)$/, '').replace(' - ', ' – ');
   }
-  for (const b of document.querySelectorAll('#sources button')) b.onclick = async () => { segOn($('#sources'), b); S.source = b.dataset.src; await base(); fillItems(); };
-  $('#item').onchange = () => showItem(S.showcase.find(x => x.id === $('#item').value));
-  for (const b of document.querySelectorAll('#mode button')) b.onclick = () => { if (b.disabled) return; segOn($('#mode'), b); S.mode = b.dataset.mode; play(); };
+  function subtitle(it) {
+    if (it.source === 'rain') return `${it.n_steps} hours · ${Math.round(it.meta.total_mm).toLocaleString('en-IN')} mm of rain in total`;
+    const a = dmy(it.meta.start), b = dmy(it.meta.end);
+    return `${a.m} ${a.y} – ${b.m} ${b.y} · ${it.n_steps} trading days · ` +
+      (it.meta.kind === 'drama' ? 'tension = how eventful the market was' : 'tension = the price itself');
+  }
 
-  function trackRow(rank, tid, pct, hosted, on, extra) {
+  // A one-word description of the tension curve's shape, so cards can be filtered by pattern.
+  function shapeOf(v) {
+    const n = v.length, mean = v.reduce((a, x) => a + x, 0) / n;
+    const sd = Math.sqrt(v.reduce((a, x) => a + (x - mean) ** 2, 0) / n) || 1;
+    const corr = v.reduce((a, x, i) => a + (x - mean) * (i / (n - 1) - .5), 0) / (n * sd * Math.sqrt(1 / 12));
+    if (corr > .7) return 'Slow build';
+    if (corr < -.7) return 'Fades away';
+    // separate peaks: tops above 0.7 with a dip below 0.4 between them
+    let peaks = 0, armed = true;
+    for (const x of v) { if (armed && x >= .7) { peaks++; armed = false; } else if (x <= .4) armed = true; }
+    if (peaks >= 3) return 'Rollercoaster';
+    if (peaks === 2) return 'Twin peaks';
+    const pos = v.indexOf(Math.max(...v)) / (n - 1);
+    return pos < .34 ? 'Early shock' : pos < .67 ? 'Mid-story peak' : 'Late climax';
+  }
+
+  function sizeCanvas(c) {
+    const dpr = window.devicePixelRatio || 1, w = c.clientWidth, h = c.clientHeight;
+    c.width = Math.round(w * dpr); c.height = Math.round(h * dpr);
+    const g = c.getContext('2d'); g.setTransform(dpr, 0, 0, dpr, 0, 0); return [g, w, h];
+  }
+  function drawThumb(c, th) {
+    const [g, w, h] = sizeCanvas(c), css = n => getComputedStyle(document.documentElement).getPropertyValue(n).trim();
+    const pad = 6, X = i => pad + i / (th.v.length - 1) * (w - 2 * pad);
+    g.beginPath(); g.moveTo(X(0), h);
+    th.v.forEach((y, i) => g.lineTo(X(i), h - pad - y * (h - 2 * pad)));
+    g.lineTo(X(th.v.length - 1), h); g.closePath();
+    g.fillStyle = css('--data'); g.globalAlpha = .22; g.fill(); g.globalAlpha = 1;
+    const lo = Math.min(...th.aux), hi = Math.max(...th.aux);
+    g.beginPath(); g.strokeStyle = css('--fg'); g.lineWidth = 1.6; g.lineJoin = 'round';
+    th.aux.forEach((y, i) => { const yy = h - pad - (y - lo) / ((hi - lo) || 1) * (h - 2 * pad); i ? g.lineTo(X(i), yy) : g.moveTo(X(i), yy); });
+    g.stroke();
+    const pk = th.v.indexOf(Math.max(...th.v));
+    g.fillStyle = css('--song'); g.beginPath(); g.arc(X(pk), h - pad - th.v[pk] * (h - 2 * pad), 3.5, 0, 7); g.fill();
+  }
+
+  function filters() {
+    const srcs = [...new Set(S.showcase.map(x => x.source))];
+    const fs = $('#f-src'); fs.innerHTML = '';
+    for (const [k, label] of [['', 'All'], ...srcs.map(x => [x, SRC_NAME[x] || x])]) {
+      const b = document.createElement('button'); b.textContent = label; b.dataset.src = k; b.classList.toggle('on', k === S.fSrc);
+      b.onclick = () => { S.fSrc = k; segOn(fs, b); renderCards(); };
+      fs.appendChild(b);
+    }
+    const shapes = [...new Set(S.showcase.map(x => x.shape))].sort();
+    const fp = $('#f-shape'); fp.innerHTML = '<span class="chips-lab">Shape</span>';
+    for (const k of ['', ...shapes]) {
+      const b = document.createElement('button'); b.className = 'chip'; b.textContent = k || 'Any'; b.classList.toggle('on', k === S.fShape);
+      b.onclick = () => { S.fShape = k; for (const x of fp.querySelectorAll('.chip')) x.classList.toggle('on', x === b); renderCards(); };
+      fp.appendChild(b);
+    }
+  }
+
+  function renderCards() {
+    const box = $('#cards'); box.innerHTML = '';
+    const list = S.showcase.filter(x => (!S.fSrc || x.source === S.fSrc) && (!S.fShape || x.shape === S.fShape));
+    for (const it of list) {
+      const a = document.createElement('a');
+      a.className = 'card'; a.href = '#' + it.id;
+      const top = it.short && it.short['30'] && it.short['30'][0];
+      a.innerHTML = `<canvas class="thumb" aria-hidden="true"></canvas><div class="c-body">
+        <div class="c-chips"><span class="chip src"></span><span class="chip shape"></span></div>
+        <h3></h3><p class="c-sub"></p><p class="c-top"></p></div>`;
+      a.querySelector('.src').textContent = SRC_NAME[it.source];
+      a.querySelector('.shape').textContent = it.shape;
+      a.querySelector('h3').textContent = title(it);
+      a.querySelector('.c-sub').textContent = subtitle(it).split(' · ').slice(0, 2).join(' · ');
+      a.querySelector('.c-top').textContent = top ? '♪ ' + top.title : '';
+      box.appendChild(a);
+      requestAnimationFrame(() => drawThumb(a.querySelector('canvas'), it.thumb));
+    }
+    if (!list.length) box.innerHTML = '<p class="empty">No examples with that shape here. Try another filter.</p>';
+  }
+  let rT; window.addEventListener('resize', () => { clearTimeout(rT); rT = setTimeout(() => { if (!$('#catalog').hidden) renderCards(); }, 150); });
+
+  // ---------------------------------------------------------------- detail view
+  const FIT = c => c < 0.05 ? 'tight fit' : c < 0.15 ? 'good fit' : 'loose fit';
+  const LEN_NOTE = {
+    10: 'The whole event squeezed into the best-fitting 10 seconds of any track in the library.',
+    30: 'The whole event over the best-fitting 30 seconds of any track in the library.',
+    full: 'The whole event spread over the best-fitting complete track.',
+  };
+
+  async function route() {
+    await base();
+    const it = S.showcase.find(x => x.id === decodeURIComponent(location.hash.slice(1)));
+    if (it) {
+      if ($('#tab-find').getAttribute('aria-selected') !== 'true') $('#tab-find').click();
+      $('#catalog').hidden = true; $('#detail').hidden = false;
+      await showItem(it);
+      window.scrollTo({ top: $('.tabs').offsetTop - 8 });
+    } else {
+      pFind.audio.pause();
+      $('#detail').hidden = true; $('#catalog').hidden = false;
+      renderCards();
+    }
+  }
+  window.addEventListener('hashchange', route);
+
+  for (const b of document.querySelectorAll('#len button')) b.onclick = () => { segOn($('#len'), b); S.len = b.dataset.len; S.sel = 0; S.mode = 'single'; renderTracks(); play(); };
+  for (const b of document.querySelectorAll('#mode button')) b.onclick = () => { if (b.disabled) return; segOn($('#mode'), b); S.mode = b.dataset.mode; renderTracks(); play(); };
+
+  function trackRow(rank, tid, right, hosted, on, extra) {
     const li = document.createElement('li');
     const L = S.lib[tid] || [tid, '', '', ''];
-    li.innerHTML = `<span class="rank">${rank}</span><span class="name"></span><span class="pct">${pct == null ? '' : pct.toFixed(1) + '%'}</span>`;
+    li.innerHTML = `<span class="rank">${rank}</span><span class="name"></span><span class="pct"></span>`;
+    li.querySelector('.pct').textContent = right || '';
     li.querySelector('.name').innerHTML = `<b></b> <span class="tags"></span>`;
     li.querySelector('b').textContent = L[0];
     li.querySelector('.tags').textContent = [L[2], (L[3] || '').split(',')[0]].filter(Boolean).join(' · ') + (extra ? ' · ' + extra : '');
@@ -68,21 +178,33 @@
     return li;
   }
 
-  async function showItem(it) {
-    if (!it) return;
-    S.item = it; S.sel = 0;
-    S.curve = await J(`data/curves/${it.id}.json`);
-    $('#item-title').textContent = it.title;
-    const ol = $('#tracks'); ol.innerHTML = '';
-    it.singles.forEach((s, i) => {
-      const li = trackRow(i + 1, s.track, s.pct, !!s.audio, i === 0);
-      li.onclick = () => { S.sel = i; segOn($('#mode'), $('#mode [data-mode=single]')); S.mode = 'single'; for (const x of ol.children) x.classList.toggle('on', x === li); play(); };
+  function renderTracks() {
+    const it = S.item, ol = $('#tracks'); ol.innerHTML = '';
+    const full = S.len === 'full';
+    const rows = full ? it.singles.map(s => [s.track, s.pct.toFixed(1) + '%', !!s.audio, ''])
+      : it.short[S.len].map(s => [s.track, FIT(s.cost), true, 'from ' + fmtTime(s.cut_start)]);
+    rows.forEach(([tid, right, hosted, extra], i) => {
+      const li = trackRow(i + 1, tid, right, hosted, i === S.sel && S.mode === 'single', extra);
+      li.onclick = () => { S.sel = i; S.mode = 'single'; segOn($('#mode'), $('#mode [data-mode=single]')); for (const x of ol.children) x.classList.toggle('on', x === li); play(); };
       ol.appendChild(li);
     });
+    $('#mode').hidden = !full;
     const stBtn = $('#mode [data-mode=stitched]');
     stBtn.disabled = !it.stitched;
     stBtn.textContent = it.stitched ? `Stitched (${it.stitched.segments.length} tracks)` : 'Stitched';
-    if (!it.stitched && S.mode === 'stitched') { S.mode = 'single'; segOn($('#mode'), $('#mode [data-mode=single]')); }
+    segOn($('#mode'), $(`#mode [data-mode=${S.mode}]`));
+    $('.len-note').textContent = LEN_NOTE[S.len];
+  }
+
+  async function showItem(it) {
+    S.item = it; S.sel = 0; S.mode = 'single';
+    S.curve = await J(`data/curves/${it.id}.json`);
+    $('#item-title').textContent = title(it);
+    $('.d-sub').textContent = subtitle(it);
+    $('.d-chips').innerHTML = '<span class="chip src"></span><span class="chip shape"></span>';
+    $('.d-chips .src').textContent = SRC_NAME[it.source];
+    $('.d-chips .shape').textContent = it.shape;
+    renderTracks();
     play();
   }
 
@@ -96,16 +218,22 @@
   function play() {
     const it = S.item, c = S.curve, aux = c.aux[AUXK[it.source]], tension = c.steps.map(s => s.v);
     const src = SRC_CREDIT[it.source], board = boardFor(it, c);
-    if (S.mode === 'stitched' && it.stitched) {
+    const common = { aux, auxKind: AUXK[it.source], tension, board, explain: c.explain };
+    if (S.len !== 'full') {
+      const s = it.short[S.len][S.sel];
+      pFind.load({ ...common, stepToSec: s.step_to_sec, songCurve: s.song_curve, songT0: s.song_t0, audio: s.audio,
+        moments: s.moments.map(m => ({ song_s: m.song_s, label: m.label })),
+        credits: [`${s.credit} (${S.len}-second excerpt from ${fmtTime(s.cut_start)})`, src] });
+    } else if (S.mode === 'stitched' && it.stitched) {
       const st = it.stitched;
-      pFind.load({ aux, auxKind: AUXK[it.source], tension, stepToSec: st.step_to_sec, songCurve: st.song_curve, songT0: 0,
+      pFind.load({ ...common, stepToSec: st.step_to_sec, songCurve: st.song_curve, songT0: 0,
         audio: st.audio, moments: st.moments.map(m => ({ song_s: m.song_s, label: m.label })),
-        credits: [...st.credits, src], board });
+        credits: [...st.credits, src] });
     } else {
       const s = it.singles[S.sel];
-      pFind.load({ aux, auxKind: AUXK[it.source], tension, stepToSec: s.step_to_sec, songCurve: s.song_curve, songT0: s.song_t0,
+      pFind.load({ ...common, stepToSec: s.step_to_sec, songCurve: s.song_curve, songT0: s.song_t0,
         audio: s.audio, moments: s.moments.map(m => ({ song_s: m.song_s, label: m.label })),
-        credits: [s.credit, src], board, nohost: s.audio ? '' : 'This track is in the index only (no audio hosted here). Listen at incompetech.com.' });
+        credits: [s.credit, src], nohost: s.audio ? '' : 'This track is in the index only (no audio hosted here). Listen at incompetech.com.' });
     }
   }
 
@@ -209,5 +337,6 @@
   };
 
   // ---------------------------------------------------------------- boot
-  base().then(fillItems).catch(err => { $('#item-title').textContent = 'Could not load data: ' + err.message; });
+  base().then(() => { for (const it of S.showcase) it.shape = shapeOf(it.thumb.v); filters(); return route(); })
+    .catch(err => { $('#cards').textContent = 'Could not load data: ' + err.message; });
 })();

@@ -29,6 +29,12 @@ showcase curves; no audible clicks; no track reused within a soundtrack. Caveat:
 stitching structural slack. See `logs/stitch_vs_single.md`. The idea is packaged on its own in
 **`stitching-kit.zip`** (explainer + code + example).
 
+## 6b. Short versions and the catalog page
+Every showcase event also comes as a **10 s and a 30 s clip**: 3 tracks each, 66 clips, 21 MB, with no track reused
+across examples. The page opens on a filterable card catalog (source and shape), and the player shows raw data
+→ tension ingredients → formula → tension vs song energy on one playhead. Weakest fit: Delhi 2023 (7 bumpy days)
+in 10 s, labelled "loose fit".
+
 ## 7. Fun matches (chosen by shape alone)
 - **Nifty 50 through the COVID crash** → *One of Them*; stitched → *Welcome to HorrorLand* then *Symmetry*.
 - **Adani Enterprises, Jan–Mar 2023**, stitched → opens with *Hall of the Mountain King*.
@@ -46,6 +52,6 @@ stitching structural slack. See `logs/stitch_vs_single.md`. The idea is packaged
 - Gemini pre-check (optional) not built.
 
 ## 9. Pitch
-*Anything that changes over time has a shape, and so does every song. We match them: a market crash or a monsoon
+*Data sonification.* *Anything that changes over time has a shape, and so does every song. We match them: a market crash or a monsoon
 week picks its own soundtrack from any licensed library, and the drop lands on the turning point. It reads the
 drama from data, not pixels, so the sync is exact and explainable.*

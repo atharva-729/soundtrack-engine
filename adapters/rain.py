@@ -45,6 +45,12 @@ def event_curve(cid, city, lat, lon, start, end, showcase):
                              "credit": "Weather data by Open-Meteo.com (CC BY 4.0), ERA5 reanalysis"})
 
 
+def explain(c):
+    """How the tension of a saved rain curve is built, for the site's step-by-step chart."""
+    return {"input": {"label": "Rain", "unit": "mm/h", "values": c["aux"]["mm"]}, "parts": [],
+            "formula": "tension = rain averaged over a 3-hour window, rescaled to 0–1"}
+
+
 if __name__ == "__main__":
     n = 0
     for ev in EVENTS:

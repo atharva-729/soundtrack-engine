@@ -1,4 +1,5 @@
-// One playhead through everything: data chart (top), tension vs song energy overlay (middle), moments, credits.
+// One playhead through everything: raw data (top), the tension ingredients, the formula, tension vs song energy,
+// moments, credits.
 // x axis = song time. Data steps are placed at their aligned song second (step_to_sec).
 (function (root) {
   const css = n => getComputedStyle(document.documentElement).getPropertyValue(n).trim();
@@ -20,18 +21,15 @@
         cData: q('.c-data'), cOver: q('.c-overlay'), audio: q('audio'), bPlay: q('.b-play'), seek: q('.seek'),
         time: q('.time'), momentsEl: q('.moments'), creditsEl: q('.credits ul'), card: q('.moment-card'),
         nohost: q('.nohost'), lAux: q('.l-aux'), jumbo: q('.jumbo'), listen: q('.listen'), lt: q('.listen .lt'),
+        partsEl: q('.parts'), formula: q('.formula'), chartsEl: q('.charts'),
       });
+      this.partCanvases = [];
       this.prevT = 0;
       this.bPlay.onclick = () => this.toggle();
       q('.b-back').onclick = () => this.seekTo(this.audio.currentTime - 10);
       q('.b-fwd').onclick = () => this.seekTo(this.audio.currentTime + 10);
       this.seek.oninput = () => this.seekTo(this.seek.value / 1000 * this.duration());
-      for (const c of [this.cData, this.cOver]) {
-        c.addEventListener('pointerdown', e => {
-          const r = c.getBoundingClientRect();
-          this.seekTo((e.clientX - r.left) / r.width * this.duration());
-        });
-      }
+      for (const c of [this.cData, this.cOver]) this.seekable(c);
       this.audio.addEventListener('play', () => { this.bPlay.textContent = '❚❚'; this.bPlay.setAttribute('aria-label', 'Pause'); this.loop(); });
       this.audio.addEventListener('pause', () => { this.bPlay.textContent = '▶'; this.bPlay.setAttribute('aria-label', 'Play'); });
       this.audio.addEventListener('loadedmetadata', () => this.draw());
@@ -40,9 +38,32 @@
       this.ro.observe(this.cData);
     }
 
+    seekable(c) {
+      c.addEventListener('pointerdown', e => {
+        const r = c.getBoundingClientRect();
+        this.seekTo((e.clientX - r.left) / r.width * this.duration());
+      });
+    }
+
     load(o) {
-      // o: {aux, auxKind, tension, stepToSec, songCurve, songT0, audio, moments:[{song_s,label}], credits, nohost}
+      // o: {aux, auxKind, tension, stepToSec, songCurve, songT0, audio, moments:[{song_s,label}], credits, nohost,
+      //     explain: {input: {label, unit}, parts: [{label, help, weight, fmt, values}], formula}}
       this.o = o;
+      const ex = o.explain;
+      this.partsEl.innerHTML = '';
+      this.partCanvases = [];
+      for (const pt of (ex && ex.parts) || []) {
+        const c = document.createElement('canvas');
+        c.className = 'c-part'; c.height = 52; c.setAttribute('aria-label', pt.label + ': ' + pt.help);
+        c.title = pt.label + ': ' + pt.help;
+        this.seekable(c);
+        this.partsEl.appendChild(c);
+        this.partCanvases.push([c, pt]);
+      }
+      this.formula.hidden = !ex;
+      if (ex) this.formula.innerHTML = '<span class="arr">&darr;</span> <b></b>';
+      if (ex) this.formula.querySelector('b').textContent = ex.formula;
+      this.chartsEl.classList.toggle('has-explain', !!ex);
       this.audio.pause();
       if (o.audio) { this.audio.src = o.audio; this.audio.preload = 'metadata'; } else { this.audio.removeAttribute('src'); }
       this.bPlay.disabled = !o.audio;
@@ -208,12 +229,27 @@
         g.lineTo(xs[xs.length - 1] / d * w, h); g.lineTo(xs[0] / d * w, h); g.closePath();
         g.fillStyle = fg + '22'; g.fill();
         this.line(g, xs, o.aux, w, h, pad, fg, 1.6, lo, hi, d);
-        g.fillStyle = fg; g.font = '11px system-ui';
-        const lab = o.auxKind === 'price' ? `${lo.toFixed(0)} – ${hi.toFixed(0)}` : `max ${hi.toFixed(1)} mm/h`;
-        g.fillText(lab, 6, 12);
+        const ex = o.explain, unit = o.auxKind === 'price' ? '₹' : 'mm/h';
+        const name = ex ? ex.input.label : (o.auxKind === 'price' ? 'Price' : 'Rain');
+        const range = o.auxKind === 'price' ? `${this.num(lo)}–${this.num(hi)} ₹` : `0–${hi.toFixed(1)} mm/h`;
+        this.tag(g, 6, 14, name, fg, range);
       }
       for (const m of this.moments || []) { g.fillStyle = ac; g.fillRect(m.song_s / d * w - 1, h - 6, 2, 6); }
       this.playhead(g, t / d * w, h);
+      const si = this.stepAt(t);
+      if (o.aux && o.aux.length) this.readout(g, w, o.auxKind === 'price' ? '₹ ' + this.num(o.aux[si]) : o.aux[si].toFixed(1) + ' mm/h', fg);
+      // --- tension ingredients
+      for (const [c, pt] of this.partCanvases) {
+        let [g2, w2, h2] = this.sizeCanvas(c);
+        g2.clearRect(0, 0, w2, h2);
+        const xs = pt.values.map((_, i) => o.stepToSec[Math.min(i, o.stepToSec.length - 1)]);
+        const [lo, hi] = minmax(pt.values);
+        this.area(g2, xs, pt.values, w2, h2, 6, dc, lo, hi, d);
+        this.tag(g2, 6, 14, `${pt.label} × ${pt.weight}`, fg, pt.help);
+        this.playhead(g2, t / d * w2, h2);
+        const v = pt.values[si];
+        this.readout(g2, w2, pt.fmt === 'pct' ? (100 * v).toFixed(1) + '%' : v.toFixed(2), dc);
+      }
       // --- overlay
       [g, w, h] = this.sizeCanvas(this.cOver);
       g.clearRect(0, 0, w, h);
@@ -227,10 +263,44 @@
         const xs = o.tension.map((_, i) => o.stepToSec[Math.min(i, o.stepToSec.length - 1)]);
         this.line(g, xs, o.tension, w, h, 10, dc, 2, lo, hi, d);
       }
+      if (o.explain && o.tension && o.tension.length) {
+        this.tag(g, 6, 14, 'Tension', dc, 'what the music follows');
+        this.readout(g, w, 'tension ' + o.tension[this.stepAt(t)].toFixed(2), dc);
+      }
       for (const m of this.moments || []) {
         g.strokeStyle = ac; g.globalAlpha = .55; g.beginPath(); g.moveTo(m.song_s / d * w, 0); g.lineTo(m.song_s / d * w, h); g.stroke(); g.globalAlpha = 1;
       }
       this.playhead(g, t / d * w, h);
+    }
+
+    num(x) { return x.toLocaleString('en-IN', { maximumFractionDigits: x < 100 ? 1 : 0 }); }
+
+    area(g, xs, ys, w, h, pad, color, lo, hi, d) {
+      g.beginPath();
+      for (let i = 0; i < xs.length; i++) {
+        const x = xs[i] / d * w, y = h - pad - (ys[i] - lo) / (hi - lo) * (h - 2 * pad);
+        i ? g.lineTo(x, y) : g.moveTo(x, y);
+      }
+      g.lineTo(xs[xs.length - 1] / d * w, h); g.lineTo(xs[0] / d * w, h); g.closePath();
+      g.globalAlpha = .16; g.fillStyle = color; g.fill(); g.globalAlpha = 1;
+      this.line(g, xs, ys, w, h, pad, color, 1.5, lo, hi, d);
+    }
+
+    // label in the top-left corner: bold name + muted note
+    tag(g, x, y, name, color, note) {
+      g.font = '700 12px system-ui'; g.fillStyle = color; g.fillText(name, x, y);
+      if (!note) return;
+      const nw = g.measureText(name).width; g.font = '11px system-ui';
+      if (x + nw + 8 + g.measureText(note).width > g.canvas.clientWidth - 110) return;  // no room next to the readout
+      g.fillStyle = css('--mut'); g.fillText(note, x + nw + 8, y);
+    }
+
+    // current value in the top-right corner
+    readout(g, w, text, color) {
+      g.font = '800 13px system-ui';
+      const tw = g.measureText(text).width;
+      g.fillStyle = css('--card'); g.globalAlpha = .85; g.fillRect(w - tw - 14, 2, tw + 12, 18); g.globalAlpha = 1;
+      g.fillStyle = color; g.fillText(text, w - tw - 8, 15);
     }
 
     playhead(g, x, h) {
