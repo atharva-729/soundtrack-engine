@@ -16,7 +16,8 @@ and drops line up with the data's, and shows *where* they line up ("the drop lan
 
 The engine only *chooses and aligns* existing, licensed recordings. It never generates or composes music.
 
-**Live site:** see `SUMMARY.md` (GitHub Pages, served from `/site`).
+**Live demo:** https://atharva-729.github.io/soundtrack-engine/ (status and details in `SUMMARY.md`; the project
+is parked as of November 2026).
 
 ## How it works
 
