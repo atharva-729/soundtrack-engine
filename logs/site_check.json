@@ -27,7 +27,7 @@
  "blind_test": {
   "trials": 12,
   "answers": 12,
-  "score_text": "3 of 12"
+  "score_text": "6 of 12"
  },
  "parity": {
   "python_top5": [

@@ -2,7 +2,7 @@
  "console_errors": [],
  "test_tone_result": "ICICI Bank 2023 \u00b7 shape",
  "playhead": {
-  "audio_time_after_2_5s": 2.46,
+  "audio_time_after_2_5s": 2.47,
   "seek_value": "82",
   "moves": true
  },
@@ -13,7 +13,7 @@
  "blind_test": {
   "trials": 12,
   "answers": 12,
-  "score_text": "3 of 12"
+  "score_text": "6 of 12"
  },
  "parity": {
   "python_top5": [

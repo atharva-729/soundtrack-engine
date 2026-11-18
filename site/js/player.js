@@ -34,8 +34,9 @@
         cData: q('.c-data'), cOver: q('.c-overlay'), audio: q('audio'), bPlay: q('.b-play'), seek: q('.seek'),
         time: q('.time'), momentsEl: q('.moments'), creditsEl: q('.credits ul'), card: q('.moment-card'),
         nohost: q('.nohost'), lAux: q('.l-aux'), jumbo: q('.jumbo'), listen: q('.listen'), lt: q('.listen .lt'),
-        partsEl: q('.parts'), formula: q('.formula'), chartsEl: q('.charts'),
+        partsEl: q('.parts'), formula: q('.formula'), chartsEl: q('.charts'), how: q('.how'),
       });
+      document.addEventListener('visibilitychange', () => { if (!document.hidden) this.autoplaySoon(); });
       this.partCanvases = [];
       this.prevT = 0;
       this.bPlay.onclick = () => this.toggle();
@@ -100,6 +101,9 @@
       this.lastStep = -1;
       this.renderBoard(0);
       this.draw();
+      this.renderHow(o);
+      this.userPaused = false;  // new music: start it by itself
+      this.autoplaySoon();
     }
 
     stepAt(t) {
@@ -195,7 +199,57 @@
       return Math.max(last + 2, (o.songT0 || 0) + (o.songCurve ? o.songCurve.length : 0));
     }
 
-    toggle() { if (!this.o || !this.o.audio) return; this.audio.paused ? this.audio.play() : this.audio.pause(); }
+    toggle() {
+      if (!this.o || !this.o.audio) return;
+      clearTimeout(this.autoT);
+      if (this.audio.paused) { this.userPaused = false; this.audio.play(); } else { this.userPaused = true; this.audio.pause(); }
+    }
+
+    // Start playing by itself `ms` after new music is loaded or the player comes back into view, unless the
+    // listener paused it themselves. Skipped if the music changed meanwhile or the player is no longer on screen.
+    autoplaySoon(ms = 2000, force = false) {
+      clearTimeout(this.autoT);
+      if (!this.o || !this.o.audio || (this.userPaused && !force)) return;
+      const o = this.o;
+      this.autoT = setTimeout(() => {
+        if (this.o !== o || !this.audio.paused || document.hidden || !this.host.offsetParent) return;
+        const p = this.audio.play();
+        if (p && p.catch) p.catch(() => { this.lt.textContent = 'Press ▶ to listen (your browser blocks auto-play until you click on the page once).'; });
+      }, ms);
+    }
+
+    // Plain-words explanation of both lines, shown under the tension / energy chart.
+    renderHow(o) {
+      const ex = o.explain, el = this.how;
+      el.innerHTML = '';
+      const para = (cls, head, text) => {
+        const p = document.createElement('p'); p.className = cls;
+        const b = document.createElement('b'); b.textContent = head + ' ';
+        p.appendChild(b); p.appendChild(document.createTextNode(text)); el.appendChild(p);
+      };
+      if (ex) {
+        const parts = ex.parts || [], lower = s => s.charAt(0).toLowerCase() + s.slice(1);
+        let mix;
+        if (parts.length >= 2) {
+          mix = 'Two things are mixed. ' + parts.map(p => `${p.label} (${Math.round(100 * p.weight)}%): ${p.help}.`).join(' ');
+        } else if (parts.length === 1) {
+          mix = `It measures ${lower(parts[0].label)}: ${parts[0].help}.`;
+        } else {
+          mix = 'The value itself is the tension, lightly smoothed so single readings don\'t jump around.';
+        }
+        para('k-data', 'Data tension:', `It starts from the ${lower(ex.input.label)} in the top chart. ${mix} ` +
+          'The result is rescaled so the calmest point of this event is 0 and the most tense is 1. That\'s the data tension line.');
+      } else {
+        para('k-data', 'Data tension:', 'Each event\'s raw numbers are turned into a 0-to-1 score, where 1 is the most tense point of that event.');
+      }
+      para('k-song', 'Song energy:', 'For every split second of the recording we measure how loud it is (60%) and how much the sound changes, ' +
+        'like new notes, drum hits or instruments coming in (40%). That\'s smoothed over about 3 seconds, so you see the swells rather ' +
+        'than single beats, and silence at the start and end is ignored.');
+      para('k-match', 'How they line up:', 'Both lines are compared shape against shape. The music may run a little ahead of or behind ' +
+        'the data in places (within limits), so the rises, calms and drops land together. The match % says how much better this fit is ' +
+        'than random pairings of events and songs.');
+      el.hidden = false;
+    }
 
     seekTo(t) {
       t = Math.max(0, Math.min(this.duration() - 0.05, t));

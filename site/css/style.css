@@ -74,6 +74,12 @@ canvas.c-overlay { height: 130px; }
 .legend { display: flex; gap: 14px; font-size: 12px; color: var(--mut); flex-wrap: wrap; }
 .legend span::before { content: ""; display: inline-block; width: 14px; height: 3px; border-radius: 2px; margin-right: 5px; vertical-align: middle; }
 .l-data::before { background: var(--data); } .l-song::before { background: var(--song); } .l-aux::before { background: var(--mut); }
+.how { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 10px 18px; margin: 10px 0 4px;
+  font-size: 13px; line-height: 1.5; color: var(--mut); }
+.how p { margin: 0; }
+.how b { color: var(--fg); }
+.how .k-data b { color: var(--data); } .how .k-song b { color: var(--song); }
+.how .k-match { grid-column: 1 / -1; }
 .moment-card { position: absolute; left: 50%; top: 10px; transform: translateX(-50%); max-width: min(92%, 560px);
   background: var(--acc2); color: #1a1000; padding: 8px 12px; border-radius: 10px; font-weight: 600; box-shadow: var(--shadow);
   animation: pop .25s ease-out; font-size: 14px; }

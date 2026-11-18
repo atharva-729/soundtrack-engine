@@ -23,8 +23,8 @@
         const on = o === b; o.setAttribute('aria-selected', on);
         document.getElementById(o.getAttribute('aria-controls')).hidden = !on;
       }
-      if (b.id === 'tab-song') { pFind.audio.pause(); if (!pSong) pSong = new Player($('#player-song')); }
-      else if (pSong) pSong.audio.pause();
+      if (b.id === 'tab-song') { pFind.audio.pause(); if (!pSong) pSong = new Player($('#player-song')); else pSong.autoplaySoon(); }
+      else { if (pSong) pSong.audio.pause(); pFind.autoplaySoon(); }
     };
   }
   function hostOf(u) { try { return new URL(u).hostname.replace(/^www\./, ''); } catch { return 'the source site'; } }
@@ -151,7 +151,7 @@
   // ---------------------------------------------------------------- detail view
   const FIT = c => c < 0.05 ? 'tight fit' : c < 0.15 ? 'good fit' : 'loose fit';
   const LEN_NOTE = {
-    10: 'The whole event squeezed into the best-fitting 10 seconds of any track in the library.',
+    10: 'The dramatic part of the 30-second version: the same music, cut around the event\'s biggest moment.',
     30: 'The whole event over the best-fitting 30 seconds of any track in the library.',
     full: 'The whole event spread over the best-fitting complete track.',
   };

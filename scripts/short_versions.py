@@ -1,11 +1,14 @@
 """Short versions + catalog data for every showcase item (run after showcase.py).
 
-For each showcase curve and each length L in (10, 30) seconds:
-  * slide an L-second window over every library track (correlation pre-filter, then banded DTW on the
-    z-scored shapes, exactly as for full tracks), keep the 3 best distinct tracks
-  * snap the cut start to the nearby beat that keeps the best fit, render L seconds (short fades, loudnorm I=-16, metadata stripped)
-  * align the whole event to the clip (data step -> clip second) and keep the 2 (10 s) or 3 (30 s) biggest
-    moments
+For each showcase curve:
+  * 30 s: slide a 30-second window over every library track (correlation pre-filter, then banded DTW on the
+    z-scored shapes, exactly as for full tracks), keep the 3 best distinct tracks; snap the cut start to the
+    nearby beat that keeps the best fit; align the whole event to the clip and keep its 3 biggest moments
+  * 10 s: NOT searched separately (on a 10 s scale the loudness-based energy rarely matches what sounds
+    dramatic). Each 10 s clip is the dramatic part of the matching 30 s clip: same track, cut around the point
+    where the event's biggest moment lands, framed by the music itself (see dramatic_cut). The player shows the
+    section of the event that this cut plays in the 30 s version.
+Render: short fades, loudnorm I=-16, metadata stripped.
 Also adds a thumbnail (raw series + tension, 80 points) to every item and writes each item's tension recipe
 ("explain": raw input -> weighted ingredients -> tension) into site/data/curves/<id>.json.
 """
@@ -62,6 +65,64 @@ def best_windows(vals, L, used):
     return out[:TOPK]
 
 
+HIT_AT = 6.0          # preferred second of the 10 s cut where the big moment lands (more build-up than release)
+HIT_RANGE = (3.5, 7.5)  # allowed range for it (>= 2.5 s of aftermath before the fade-out)
+
+
+def drama_step(c, vals):
+    """The moment the event is about: its highest-tension labelled moment (e.g. the crash, the failure),
+    else the highest-tension step."""
+    ms = [m for m in c.get("moments", []) if 0 <= m["t"] < len(vals)]
+    return max(ms, key=lambda m: vals[m["t"]])["t"] if ms else int(np.argmax(vals))
+
+
+def frame_energy(tid):
+    """Fine-grained music energy (one value per ~46 ms, from the index cache), smoothed over ~0.5 s."""
+    z = np.load(ROOT / "library" / "cache" / f"{tid}.npz")
+    e, t = z["frame_e"].astype(float), z["frame_t"].astype(float)
+    k = max(1, int(round(0.5 / float(np.median(np.diff(t))))))
+    return t, np.convolve(e, np.ones(k) / k, mode="same")
+
+
+def dramatic_cut(tid, ti, cs30, peak_s, L=10):
+    """Start of the 10 s cut inside the 30 s clip [cs30, cs30 + 30]. Candidates: beats that put the big moment
+    (peak_s) between HIT_RANGE seconds into the cut. Each is scored on the music itself, scaled by the 30 s
+    clip's energy range:
+      hit    how far the music near the moment (+-0.75 s) stands above the cut's typical level
+      build  how much it rises from the cut's first 2 s into the moment
+      - distance from the moment to the loudest point of the cut, and from the moment to HIT_AT
+      - a start in near-silence
+    Returns (cut_start, details)."""
+    lib = M.library()
+    t, e = frame_energy(tid)
+    clip = (t >= cs30) & (t <= cs30 + 30)
+    lo_e, hi_e = np.percentile(e[clip], 5), np.percentile(e[clip], 95)
+    rng = max(hi_e - lo_e, 1e-6)
+    lo, hi = cs30, cs30 + 30 - L
+    beats = [float(b) for b in lib["beats"][ti]
+             if lo <= b <= hi and HIT_RANGE[0] <= peak_s - b <= HIT_RANGE[1]]
+    if not beats:  # the moment sits near an edge of the 30 s clip: take the closest legal cut
+        beats = [min(max(peak_s - HIT_AT, lo), hi)]
+    best = None
+    for b in beats:
+        w = (t >= b) & (t <= b + L)
+        ew, tw = e[w], t[w]
+        if len(ew) < 10:
+            continue
+        near = np.abs(tw - peak_s) <= 0.75
+        e_hit = ew[near].max() if near.any() else ew[np.argmin(np.abs(tw - peak_s))]
+        hit = (e_hit - np.median(ew)) / rng
+        build = (e_hit - ew[tw <= b + 2].mean()) / rng
+        dist = abs(tw[np.argmax(ew)] - peak_s) / L
+        pos = abs((peak_s - b) - HIT_AT) / L
+        silent = 0.5 if ew[tw <= b + 1].mean() < lo_e else 0.0
+        score = hit + 0.5 * build - 0.5 * dist - 0.3 * pos - silent
+        if best is None or score > best[0]:
+            best = (score, b, {"hit": round(float(hit), 2), "build": round(float(build), 2),
+                              "loudest_off_s": round(float(dist * L), 1)})
+    return (float(best[1]), best[2]) if best else (float(beats[0]), {})
+
+
 def render(src, cs, L, out):
     out.parent.mkdir(parents=True, exist_ok=True)
     af = f"afade=t=in:d=0.08,loudnorm=I=-16:TP=-1.5:LRA=11,afade=t=out:st={L - 0.7:.2f}:d=0.7,aresample=44100"
@@ -91,27 +152,37 @@ def main():
     for it in items:
         c = C.load(ROOT / "curves" / it["source"] / f"{it['id']}.json")
         vals = C.values(c)
-        it["short"] = {}
-        for L, nm in LENGTHS.items():
-            clips = []
-            for rank, w in enumerate(best_windows(vals, L, used)):
-                tid, ti = w["track"], w["ti"]
-                cs = w["cut_start"]
-                ce = cs + L
-                al = M.alignment(c, tid, window=(cs, ce))
-                out = OUT / f"{it['id']}_{L}s_{rank + 1}.mp3"
-                render(ROOT / rows[tid]["file"], cs, L, out)
-                ms = [{**m, "song_s": round(m["song_s"] - cs, 2)} for m in al["moments"]]
-                clips.append({"track": tid, "title": rows[tid]["title"], "credit": rows[tid]["credit"],
-                              "genre": rows[tid]["genre"], "feel": rows[tid]["feel"],
-                              "cost": round(float(al["cost"]), 4),
-                              "cut_start": round(cs, 2), "audio": f"audio/short/{out.name}",
-                              "step_to_sec": [round(x - cs, 2) for x in al["step_to_sec"]],
-                              "moments": pick_moments(c, ms, nm, L),
-                              "song_curve": al["song_curve"], "song_t0": round(al["song_t0"] - cs, 2)})
-            used.update(x["track"] for x in clips)
-            it["short"][str(L)] = clips
-            print(f"{it['id']:28s} {L:2d}s  " + " | ".join(f"{x['title'][:22]} {x['cost']:.3f}" for x in clips))
+        p = drama_step(c, vals)
+
+        def clip_row(tid, cs, L, rank, al, extra=None):
+            """al: alignment of the whole event to the 30 s clip (absolute song seconds); shifted to the cut."""
+            out = OUT / f"{it['id']}_{L}s_{rank + 1}.mp3"
+            render(ROOT / rows[tid]["file"], cs, L, out)
+            ms = [{**m, "song_s": round(m["song_s"] - cs, 2)} for m in al["moments"]]
+            return {"track": tid, "title": rows[tid]["title"], "credit": rows[tid]["credit"],
+                    "genre": rows[tid]["genre"], "feel": rows[tid]["feel"],
+                    "cost": round(float(al["cost"]), 4),
+                    "cut_start": round(cs, 2), "audio": f"audio/short/{out.name}",
+                    # for the 10 s cut, steps outside it fall before 0 / after 10 s: the player draws only the
+                    # section of the event that this cut plays
+                    "step_to_sec": [round(x - cs, 2) for x in al["step_to_sec"]],
+                    "moments": pick_moments(c, ms, LENGTHS[L], L),
+                    "song_curve": al["song_curve"], "song_t0": round(al["song_t0"] - cs, 2), **(extra or {})}
+
+        c30, c10 = [], []
+        for rank, w in enumerate(best_windows(vals, 30, used)):
+            tid, ti, cs30 = w["track"], w["ti"], w["cut_start"]
+            al = M.alignment(c, tid, window=(cs30, cs30 + 30))
+            c30.append(clip_row(tid, cs30, 30, rank, al))
+            peak_s = al["step_to_sec"][p]  # where the big moment lands in the 30 s clip (absolute seconds)
+            cs10, why = dramatic_cut(tid, ti, cs30, peak_s)
+            c10.append(clip_row(tid, cs10, 10, rank, al, {"from30": True, "hit_s": round(peak_s - cs10, 2),
+                                                          "drama": why}))
+        used.update(x["track"] for x in c30)
+        it["short"] = {"10": c10, "30": c30}
+        print(f"{it['id']:28s} 30s  " + " | ".join(f"{x['title'][:22]} {x['cost']:.3f}" for x in c30))
+        print(f"{'':28s} 10s  " + " | ".join(f"@{x['cut_start'] - y['cut_start']:4.1f}s hit {x['hit_s']:.1f}s {x['drama']}"
+                                            for x, y in zip(c10, c30)))
         aux = np.asarray(c["aux"][it["aux"]], float)
         it["thumb"] = {"aux": [round(float(x), 3) for x in C.resample(aux, 80)],
                        "v": [round(float(x), 3) for x in C.resample(vals, 80)]}

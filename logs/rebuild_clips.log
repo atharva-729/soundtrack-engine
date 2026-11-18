@@ -1,0 +1,57 @@
+=== short_versions 10:58:24
+nifty_covid_drama            30s  Blue Sizzle 0.023 | Tragic Overture: Tragi 0.024 | Hebrides Overture Fing 0.024
+                             10s  @ 9.4s hit 7.4s {'hit': 0.64, 'build': 1.0, 'loudest_off_s': 0.0} | @11.0s hit 6.7s {'hit': 0.46, 'build': 0.81, 'loudest_off_s': 0.1} | @10.5s hit 7.3s {'hit': 0.49, 'build': 0.95, 'loudest_off_s': 0.2}
+reliance_2008_drama          30s  Sneaky Snitch 0.043 | Zanzibar 0.045 | Lightless Dawn 0.058
+                             10s  @17.9s hit 7.3s {'hit': 0.68, 'build': 0.93, 'loudest_off_s': 0.4} | @17.7s hit 7.3s {'hit': 0.84, 'build': 1.01, 'loudest_off_s': 0.2} | @18.5s hit 6.2s {'hit': 0.33, 'build': 0.8, 'loudest_off_s': 0.2}
+infy_2019_20_drama           30s  Laser Groove 0.059 | Professor Umlaut 0.081 | Cool Rock 0.083
+                             10s  @17.6s hit 5.9s {'hit': 0.81, 'build': 0.93, 'loudest_off_s': 0.4} | @15.0s hit 7.2s {'hit': 0.86, 'build': 1.11, 'loudest_off_s': 0.4} | @18.1s hit 4.7s {'hit': 0.86, 'build': 1.04, 'loudest_off_s': 0.3}
+adanient_2023q1_drama        30s  Cryptic Sorrow 0.009 | Brandenburg Concerto N 0.011 | Le Grand Chase 0.011
+                             10s  @ 6.2s hit 7.3s {'hit': 0.45, 'build': 0.81, 'loudest_off_s': 0.2} | @ 6.0s hit 7.4s {'hit': 0.5, 'build': 0.91, 'loudest_off_s': 1.1} | @ 5.1s hit 7.4s {'hit': 0.49, 'build': 1.03, 'loudest_off_s': 0.3}
+tcs_last12_shape             30s  09 - Le Coucou au fond 0.015 | Symphony No. 2 in D Ma 0.018 | Symphony No. 6 in B mi 0.020
+                             10s  @ 2.7s hit 3.8s {'hit': 0.51, 'build': -0.01, 'loudest_off_s': 1.5} | @ 4.3s hit 3.9s {'hit': 0.14, 'build': -0.07, 'loudest_off_s': 1.8} | @ 2.6s hit 3.6s {'hit': 0.38, 'build': -0.15, 'loudest_off_s': 3.3}
+reliance_last12_shape        30s  Summer - 1. Movement - 0.029 | Pachelbel - Canon in D 0.038 | Tafi Maradi no voice 0.039
+                             10s  @ 0.0s hit 5.1s {'hit': 0.17, 'build': 0.14, 'loudest_off_s': 2.7} | @ 2.5s hit 3.6s {'hit': 0.39, 'build': 0.05, 'loudest_off_s': 0.6} | @ 0.0s hit 4.8s {'hit': 0.3, 'build': 0.14, 'loudest_off_s': 1.5}
+hdfcbank_last12_shape        30s  Symphony No. 3 in F Ma 0.015 | Symphony No. 3 in A Mi 0.016 | Gymnopedie No. 2 0.019
+                             10s  @ 7.9s hit 4.3s {'hit': 0.19, 'build': -0.29, 'loudest_off_s': 3.0} | @10.1s hit 3.5s {'hit': -0.03, 'build': -0.13, 'loudest_off_s': 3.5} | @ 9.4s hit 4.1s {'hit': 0.16, 'build': 0.04, 'loudest_off_s': 4.1}
+rain_mumbai_2005             30s  Symphony No. 2 in D Ma 0.051 | Shades of Spring 0.066 | Symphony No. 3 in F Ma 0.076
+                             10s  @ 6.6s hit 6.3s {'hit': 0.62, 'build': 0.81, 'loudest_off_s': 0.3} | @ 6.5s hit 6.4s {'hit': 0.57, 'build': 0.82, 'loudest_off_s': 0.5} | @ 4.3s hit 7.3s {'hit': 0.37, 'build': 0.52, 'loudest_off_s': 0.1}
+rain_chennai_2015            30s  Super Power Cool Dude 0.042 | Sidewalk Shade 0.082 | Hit the Streets 0.092
+                             10s  @ 0.5s hit 7.4s {'hit': 0.75, 'build': 0.87, 'loudest_off_s': 0.0} | @ 3.3s hit 5.5s {'hit': 0.52, 'build': 0.95, 'loudest_off_s': 0.3} | @ 2.2s hit 6.6s {'hit': 0.47, 'build': 0.63, 'loudest_off_s': 0.3}
+rain_delhi_2023              30s  Brittle Rille 0.331 | Dub Eastern 0.334 | Life of Riley 0.346
+                             10s  @ 7.8s hit 7.2s {'hit': 0.47, 'build': 0.72, 'loudest_off_s': 0.1} | @ 8.2s hit 5.8s {'hit': 0.46, 'build': 0.47, 'loudest_off_s': 2.9} | @10.0s hit 3.9s {'hit': 0.71, 'build': 0.75, 'loudest_off_s': 0.0}
+rain_kochi_2018              30s  Symphony No. 3 in A Mi 0.045 | Symphony No. 4 in E Mi 0.071 | Blue Feather 0.073
+                             10s  @ 8.8s hit 4.1s {'hit': 0.44, 'build': 0.43, 'loudest_off_s': 0.1} | @ 4.5s hit 6.9s {'hit': 0.12, 'build': 0.37, 'loudest_off_s': 0.0} | @ 3.5s hit 7.3s {'hit': 0.28, 'build': 0.88, 'loudest_off_s': 0.2}
+energy_storm_ciaran_2023     30s  Overheat 0.062 | Relent 0.064 | Liszt - Hungarian Rhap 0.066
+                             10s  @ 4.3s hit 6.0s {'hit': 0.68, 'build': 0.79, 'loudest_off_s': 1.3} | @ 4.8s hit 5.5s {'hit': 0.62, 'build': 0.84, 'loudest_off_s': 1.5} | @ 2.6s hit 7.4s {'hit': 0.57, 'build': 0.7, 'loudest_off_s': 0.5}
+energy_storm_isha_2024       30s  Ghost Story 0.057 | Ghostpocalypse - 5 Apo 0.061 | Tea Roots 0.073
+                             10s  @ 9.0s hit 6.7s {'hit': 0.17, 'build': 0.07, 'loudest_off_s': 0.4} | @10.7s hit 3.7s {'hit': 0.13, 'build': 0.58, 'loudest_off_s': 1.2} | @11.1s hit 4.0s {'hit': 0.38, 'build': 0.77, 'loudest_off_s': 1.6}
+energy_still_week_2025       30s  Overworld 0.040 | Tchaikovsky - Symphony 0.043 | Chromatic Fuge (Bach B 0.047
+                             10s  @19.8s hit 6.0s {'hit': 0.46, 'build': 0.45, 'loudest_off_s': 0.0} | @18.8s hit 4.8s {'hit': 0.35, 'build': 0.71, 'loudest_off_s': 0.0} | @19.0s hit 4.8s {'hit': 0.32, 'build': 0.36, 'loudest_off_s': 0.3}
+energy_storm_eowyn_2025      30s  Funkorama 0.012 | Canon in D for Autohar 0.019 | Night on the Docks - P 0.020
+                             10s  @17.2s hit 6.4s {'hit': 0.1, 'build': 0.08, 'loudest_off_s': 4.4} | @16.3s hit 6.6s {'hit': 0.22, 'build': 0.29, 'loudest_off_s': 3.2} | @17.9s hit 5.7s {'hit': 0.29, 'build': 0.42, 'loudest_off_s': 0.5}
+machine_engine_039           30s  Peer Gynt Suite No. 1, 0.002 | Russian Easter Festiva 0.004 | Hall of the Mountain K 0.009
+                             10s  @20.0s hit 9.8s {'hit': 0.61, 'build': 0.74, 'loudest_off_s': 0.4} | @20.0s hit 9.6s {'hit': 0.42, 'build': 0.68, 'loudest_off_s': 0.3} | @20.0s hit 9.2s {'hit': 0.39, 'build': 0.62, 'loudest_off_s': 0.8}
+machine_engine_068           30s  Symphony No. 5 in C Mi 0.004 | Mendelssohn, Felix - V 0.006 | Symphony No. 4 in A Ma 0.006
+                             10s  @20.0s hit 9.6s {'hit': 0.46, 'build': 0.89, 'loudest_off_s': 0.0} | @20.0s hit 9.3s {'hit': 0.51, 'build': 0.91, 'loudest_off_s': 0.7} | @20.0s hit 9.8s {'hit': 0.45, 'build': 0.81, 'loudest_off_s': 0.1}
+machine_engine_069           30s  Symphony No. 3 in E Fl 0.008 | Symphony No. 3 in A Mi 0.009 | Symphony No. 40 in G M 0.010
+                             10s  @20.0s hit 9.2s {'hit': 0.51, 'build': 0.62, 'loudest_off_s': 0.6} | @20.0s hit 10.0s {'hit': 0.38, 'build': 0.63, 'loudest_off_s': 0.0} | @20.0s hit 9.3s {'hit': 0.47, 'build': 0.72, 'loudest_off_s': 1.5}
+crop_ind_1961_2024           30s  Who Likes to Party 0.131 | Style Funk 0.177 | Willow and the Light 0.189
+                             10s  @ 0.0s hit 1.5s {'hit': 0.86, 'build': 0.7, 'loudest_off_s': 0.0} | @ 0.0s hit 2.8s {'hit': 0.47, 'build': 0.98, 'loudest_off_s': 4.9} | @ 0.0s hit 2.5s {'hit': 0.4, 'build': 0.46, 'loudest_off_s': 0.0}
+crop_aus_1961_2024           30s  Easy Lemon 0.148 | Porch Swing Days - slo 0.155 | Unter Donner und Blitz 0.158
+                             10s  @12.4s hit 7.5s {'hit': 0.77, 'build': 1.03, 'loudest_off_s': 0.4} | @13.0s hit 7.1s {'hit': 0.32, 'build': 0.66, 'loudest_off_s': 3.7} | @17.1s hit 3.6s {'hit': 0.71, 'build': 0.9, 'loudest_off_s': 0.7}
+crop_usa_1961_2024           30s  Urban Gauntlet 0.202 | Truth in the Stones 0.241 | Disco con Tutti 0.263
+                             10s  @ 8.8s hit 3.9s {'hit': 0.17, 'build': 0.41, 'loudest_off_s': 2.5} | @ 9.5s hit 3.6s {'hit': 0.15, 'build': 0.04, 'loudest_off_s': 2.2} | @ 7.8s hit 5.8s {'hit': 0.56, 'build': 0.7, 'loudest_off_s': 0.4}
+gdp_ind_1960_2025            30s  Carefree 0.278 | Stringed Disco 0.309 | Suonatore di Liuto 0.348
+                             10s  @20.0s hit 8.5s {'hit': 0.56, 'build': 0.65, 'loudest_off_s': 0.7} | @20.0s hit 8.9s {'hit': 0.81, 'build': 0.78, 'loudest_off_s': 1.2} | @20.0s hit 8.2s {'hit': 0.41, 'build': 0.46, 'loudest_off_s': 1.6}
+gdp_usa_1970_1985            30s  Somewhere Sunny (ver 2 0.117 | Ghostpocalypse - 6 Cro 0.130 | End of the Era 0.132
+                             10s  @ 0.0s hit 3.2s {'hit': 0.43, 'build': 0.41, 'loudest_off_s': 0.4} | @ 0.0s hit 3.0s {'hit': 0.24, 'build': 0.4, 'loudest_off_s': 0.3} | @ 0.0s hit 2.0s {'hit': 0.1, 'build': 0.19, 'loudest_off_s': 7.3}
+gdp_usa_2000_2015            30s  Julius Fucik - Entry o 0.086 | Celebration 0.107 | Symphony No. 6 in B mi 0.119
+                             10s  @11.4s hit 6.0s {'hit': 1.02, 'build': 1.14, 'loudest_off_s': 0.1} | @12.0s hit 4.9s {'hit': 0.72, 'build': 0.99, 'loudest_off_s': 0.1} | @11.9s hit 6.0s {'hit': 0.59, 'build': 0.97, 'loudest_off_s': 0.2}
+gdp_usa_2015_2025            30s  Rock Over London 0.033 | Divertissement - Pizzi 0.053 | Danse Macabre 0.056
+                             10s  @ 8.9s hit 6.4s {'hit': 0.83, 'build': 1.11, 'loudest_off_s': 0.0} | @ 6.3s hit 7.4s {'hit': 1.03, 'build': 1.11, 'loudest_off_s': 0.2} | @ 8.1s hit 7.2s {'hit': 0.69, 'build': 1.02, 'loudest_off_s': 0.1}
+short clips: 150 files, 48.2 MB
+=== make_site 11:04:43
+site data (MB): {'auxseries.bin': 0.12, 'calib.json': 0.0, 'hosted.json': 0.0, 'hosted_lib.json': 0.11, 'index.bin': 0.12, 'index_meta.json': 0.19, 'library.json': 0.14, 'showcase.json': 0.67, 'test_trials.json': 0.1}
+=== make_test 11:04:57
+25 trial curves, 50 clips, 32.0 MB
+=== done 11:06:31
