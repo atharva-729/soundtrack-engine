@@ -5,6 +5,19 @@
   const css = n => getComputedStyle(document.documentElement).getPropertyValue(n).trim();
   const fmt = s => { s = Math.max(0, s || 0); return `${Math.floor(s / 60)}:${String(Math.floor(s % 60)).padStart(2, '0')}`; };
 
+  const num = x => x.toLocaleString('en-IN', { maximumFractionDigits: Math.abs(x) < 100 ? 1 : 0 });
+  // how to print a value of each source's raw series
+  const UNITS = {
+    price: { name: 'Price', legend: 'price', f: v => '₹ ' + num(v) },
+    mm: { name: 'Rain', legend: 'rain (mm / hour)', f: v => v.toFixed(1) + ' mm/h' },
+    gw: { name: 'Wind output', legend: 'wind output (GW)', f: v => v.toFixed(1) + ' GW' },
+    temp: { name: 'Turbine temperature', legend: 'turbine temperature (°R)', f: v => v.toFixed(1) + ' °R' },
+    yield: { name: 'Cereal yield', legend: 'cereal yield (kg/ha)', f: v => num(Math.round(v)) + ' kg/ha' },
+    gdp: { name: 'Real GDP', legend: 'real GDP ($ bn)', f: v => '$' + num(Math.round(v)) + ' bn' },
+  };
+  const unitOf = k => UNITS[k] || { name: 'Data', legend: 'data', f: v => num(v) };
+  const pct = (x, d = 1) => (x >= 0 ? '+' : '−') + Math.abs(100 * x).toFixed(d) + '%';
+
   function minmax(a) {
     let lo = Infinity, hi = -Infinity;
     for (const v of a) { if (v < lo) lo = v; if (v > hi) hi = v; }
@@ -68,7 +81,7 @@
       if (o.audio) { this.audio.src = o.audio; this.audio.preload = 'metadata'; } else { this.audio.removeAttribute('src'); }
       this.bPlay.disabled = !o.audio;
       this.nohost.hidden = !o.nohost; this.nohost.textContent = o.nohost || '';
-      this.lAux.textContent = { price: 'price', mm: 'rain (mm / hour)' }[o.auxKind] || '';
+      this.lAux.textContent = unitOf(o.auxKind).legend;
       this.momentsEl.innerHTML = '';
       this.moments = (o.moments || []).slice().sort((a, b) => a.song_s - b.song_s);
       for (const m of this.moments) {
@@ -121,6 +134,30 @@
           nm[1].textContent = 'total so far'; set(sc[1], tot.toFixed(0)); ex[1].textContent = 'mm';
           J.querySelector('.clk').textContent = b.labels[i];
           J.querySelector('.sub').textContent = mm >= 0.6 * mx ? 'downpour' : mm >= 0.25 * mx ? 'heavy rain' : mm > 0.2 ? 'rain' : 'calm';
+        } else if (b.kind === 'energy') {
+          const gw = o.aux[i], sh = b.x.share[i];
+          nm[0].textContent = b.name; set(sc[0], gw.toFixed(1)); ex[0].textContent = 'GW of wind power';
+          nm[1].textContent = 'share of power'; set(sc[1], Math.round(sh) + '%'); ex[1].textContent = 'of GB generation';
+          J.querySelector('.clk').textContent = b.labels[i];
+          J.querySelector('.sub').textContent = gw >= 15 ? 'near-record wind' : gw >= 10 ? 'strong wind' : gw >= 5 ? 'moderate wind' : gw >= 2 ? 'light wind' : 'almost still';
+        } else if (b.kind === 'machine') {
+          const v = o.tension[i], left = o.tension.length - 1 - i;
+          nm[0].textContent = b.name; set(sc[0], Math.round(100 * v) + '%'); ex[0].textContent = 'wear';
+          nm[1].textContent = 'cycles left'; set(sc[1], left); ex[1].textContent = 'until failure';
+          J.querySelector('.clk').textContent = b.labels[i];
+          J.querySelector('.sub').textContent = left === 0 ? 'FAILED' : v >= 0.8 ? 'service now' : v >= 0.5 ? 'wearing fast' : v >= 0.25 ? 'wearing' : 'healthy';
+        } else if (b.kind === 'crop') {
+          const y = o.aux[i], yoy = b.x.yoy[i], sf = b.x.shortfall[i];
+          nm[0].textContent = b.name; set(sc[0], num(Math.round(y))); ex[0].textContent = 'kg of cereal per hectare';
+          nm[1].textContent = 'vs last year'; set(sc[1], i ? pct(yoy) : '–'); ex[1].textContent = 'harvest ' + (i + 1) + ' of ' + o.aux.length;
+          J.querySelector('.clk').textContent = b.labels[i];
+          J.querySelector('.sub').textContent = sf > 0.005 ? (100 * sf).toFixed(0) + '% below its best of the last 5 years' : 'best harvest in 5 years';
+        } else if (b.kind === 'gdp') {
+          const g = b.x.growth[i], dd = b.x.drop[i], ch = o.aux[i] / o.aux[0] - 1;
+          nm[0].textContent = b.name; set(sc[0], pct(g)); ex[0].textContent = b.quarterly ? 'growth this quarter' : 'growth this year';
+          nm[1].textContent = 'since start'; set(sc[1], pct(ch, 0)); ex[1].textContent = 'real GDP';
+          J.querySelector('.clk').textContent = b.labels[i];
+          J.querySelector('.sub').textContent = dd > 0.0005 ? (100 * dd).toFixed(1) + '% below its peak' : 'at a new high';
         }
         this.lastStep = i;
       }
@@ -229,15 +266,13 @@
         g.lineTo(xs[xs.length - 1] / d * w, h); g.lineTo(xs[0] / d * w, h); g.closePath();
         g.fillStyle = fg + '22'; g.fill();
         this.line(g, xs, o.aux, w, h, pad, fg, 1.6, lo, hi, d);
-        const ex = o.explain, unit = o.auxKind === 'price' ? '₹' : 'mm/h';
-        const name = ex ? ex.input.label : (o.auxKind === 'price' ? 'Price' : 'Rain');
-        const range = o.auxKind === 'price' ? `${this.num(lo)}–${this.num(hi)} ₹` : `0–${hi.toFixed(1)} mm/h`;
-        this.tag(g, 6, 14, name, fg, range);
+        const U = unitOf(o.auxKind), name = o.explain ? o.explain.input.label : U.name;
+        this.tag(g, 6, 14, name, fg, `${U.f(lo)} – ${U.f(hi)}`);
       }
       for (const m of this.moments || []) { g.fillStyle = ac; g.fillRect(m.song_s / d * w - 1, h - 6, 2, 6); }
       this.playhead(g, t / d * w, h);
       const si = this.stepAt(t);
-      if (o.aux && o.aux.length) this.readout(g, w, o.auxKind === 'price' ? '₹ ' + this.num(o.aux[si]) : o.aux[si].toFixed(1) + ' mm/h', fg);
+      if (o.aux && o.aux.length) this.readout(g, w, unitOf(o.auxKind).f(o.aux[si]), fg);
       // --- tension ingredients
       for (const [c, pt] of this.partCanvases) {
         let [g2, w2, h2] = this.sizeCanvas(c);

@@ -55,7 +55,7 @@
     const t = trials[cur];
     heard = { A: false, B: false };
     $('#tn').textContent = `Trial ${cur + 1} of ${trials.length}`;
-    $('#tsrc').textContent = { stock: 'a stock market period', rain: 'a rain event' }[t.source];
+    $('#tsrc').textContent = { stock: 'a stock market period', rain: 'a rain event', energy: 'a week of UK wind power', machine: 'a jet engine wearing out', crop: 'a country\'s harvests', gdp: 'an economy over time' }[t.source];
     for (const b of document.querySelectorAll('.answer button')) b.disabled = true;
     for (const id of ['#pa', '#pb']) $(id).classList.remove('heard', 'playing');
     draw(t, t.engine.map, -1);

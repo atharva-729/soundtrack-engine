@@ -19,7 +19,7 @@ from engine import match as M  # noqa: E402
 
 SITE = ROOT / "site"
 SHOTS = ROOT / "logs" / "screens"
-PORT = 8765
+PORT = 0  # 0 = any free port (8765 is often taken by other local servers)
 TONE = SITE / "test" / "test_tone.wav"
 
 
@@ -48,7 +48,7 @@ def main():
 
     SHOTS.mkdir(parents=True, exist_ok=True)
     srv = serve()
-    base = f"http://127.0.0.1:{PORT}"
+    base = f"http://127.0.0.1:{srv.server_address[1]}"
     report = {"console_errors": [], "screens": []}
     with sync_playwright() as p:
         br = p.chromium.launch(channel="msedge", headless=True, args=["--autoplay-policy=no-user-gesture-required"])

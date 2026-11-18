@@ -19,7 +19,7 @@ from engine import stitch as S  # noqa: E402
 
 CLIP = 40
 OUT = ROOT / "site" / "audio" / "test"
-AUXK = {"stock": "price", "rain": "mm"}
+AUXK = C.AUX_KEY
 
 
 def cut(src, start, dst):

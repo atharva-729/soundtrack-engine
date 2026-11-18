@@ -59,10 +59,10 @@
   <!-- ============ song -> data ============ -->
   <section id="panel-song" role="tabpanel" aria-labelledby="tab-song" hidden>
     <div class="drop" id="drop">
-      <p><b>Choose a song</b> (mp3, wav, m4a, ogg…) and find the market moment or storm that felt like it.</p>
+      <p><b>Choose a song</b> (mp3, wav, m4a, ogg…) and find the real event that felt like it: a market moment, a storm, a week of wind power, an engine's life, a harvest history or an economy.</p>
       <label class="file"><input type="file" id="song-file" accept="audio/*"><span>Choose audio file</span></label>
       <div class="filters seg" id="rev-sources" role="group" aria-label="Search in">
-        <button data-src="" class="on">Everything</button><button data-src="stock">Stocks</button><button data-src="rain">Rain</button>
+        <button data-src="" class="on">Everything</button><button data-src="stock">Stocks</button><button data-src="rain">Rain</button><button data-src="energy">Energy</button><button data-src="machine">Machines</button><button data-src="crop">Crops</button><button data-src="gdp">Economy</button>
       </div>
       <p class="private">🔒 Your song never leaves your device. It is analysed right here in your browser.</p>
       <p id="song-status" class="status" aria-live="polite"></p>
@@ -79,8 +79,11 @@
 </main>
 
 <footer>
-  <p>Music: Kevin MacLeod (incompetech.com), CC BY 4.0, plus public-domain / CC recordings where listed. Every page lists the credit for what it plays.
-  Data: NSE closes via the EOD2 dataset, Open-Meteo.com (CC BY 4.0).
+  <p>Music: Kevin MacLeod (incompetech.com), CC BY 4.0; Musopen orchestral recordings (CC0, public domain);
+  classical recordings from <a href="https://www.classicals.de">classicals.de</a> (CC BY-NC 4.0, CC BY-SA 4.0, CC BY 4.0 or public domain, per track).
+  Every page lists the credit for what it plays.
+  Data: NSE closes via the EOD2 dataset; Open-Meteo.com (CC BY 4.0); Elexon BMRS (Elexon Open Data Licence);
+  NASA C-MAPSS turbofan data (public domain); World Bank Open Data (CC BY 4.0); US GDP from BEA via FRED.
   The engine only <i>chooses and aligns</i> existing recordings. It never generates music.</p>
   <p><a href="test.html">Take the blind listening test →</a></p>
 </footer>

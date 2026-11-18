@@ -13,7 +13,7 @@ from engine import curves as C  # noqa: E402
 from engine import match as M  # noqa: E402
 
 D = ROOT / "site" / "data"
-AUXK = {"stock": "price", "rain": "mm"}
+AUXK = C.AUX_KEY
 
 
 def main():

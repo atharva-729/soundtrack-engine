@@ -25,5 +25,9 @@ def get(url, *, retries=3, timeout=60, **kw):
             return r
         except requests.RequestException as e:
             last = e
-            time.sleep(2 * (i + 1))
+            code = getattr(e.response, "status_code", None)
+            if code is not None and 400 <= code < 500 and code != 429:
+                break  # missing / forbidden: retrying won't help
+            # connection / DNS drops tend to last a while: back off longer than for a server hiccup
+            time.sleep((10 if isinstance(e, requests.ConnectionError) else 2) * (i + 1))
     raise last

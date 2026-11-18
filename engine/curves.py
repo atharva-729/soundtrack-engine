@@ -15,6 +15,8 @@ import numpy as np
 
 ROOT = Path(__file__).resolve().parents[1]
 CURVES_DIR = ROOT / "curves"
+# which aux series is "the raw data" for each source (charts, scoreboard, reverse-search thumbnails)
+AUX_KEY = {"stock": "price", "rain": "mm", "energy": "gw", "machine": "temp", "crop": "yield", "gdp": "gdp"}
 
 
 def rescale01(x):

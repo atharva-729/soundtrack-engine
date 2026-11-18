@@ -1,12 +1,16 @@
 (function () {
   const $ = s => document.querySelector(s);
   const J = u => fetch(u).then(r => { if (!r.ok) throw new Error(u + ' ' + r.status); return r.json(); });
-  const AUXK = { stock: 'price', rain: 'mm' };
+  const AUXK = { stock: 'price', rain: 'mm', energy: 'gw', machine: 'temp', crop: 'yield', gdp: 'gdp' };
   const SRC_CREDIT = {
     stock: 'Data: NSE daily closes via the open-source EOD2 dataset',
     rain: 'Data: Open-Meteo.com (CC BY 4.0), ERA5 reanalysis',
+    energy: 'Data: UK generation by fuel type, Elexon BMRS (Elexon Open Data Licence)',
+    machine: 'Data: NASA C-MAPSS turbofan run-to-failure simulation (Saxena & Goebel 2008, public domain)',
+    crop: 'Data: World Bank Open Data (CC BY 4.0), cereal yield from FAO',
+    gdp: 'Data: World Bank Open Data (CC BY 4.0); US quarterly GDP: BEA via FRED',
   };
-  const SRC_NAME = { stock: 'Stocks', rain: 'Rain' };
+  const SRC_NAME = { stock: 'Stocks', rain: 'Rain', energy: 'Energy', machine: 'Machines', crop: 'Crops', gdp: 'Economy' };
   const S = { showcase: null, lib: null, calib: null, hosted: null, idx: null, item: null, len: '30', mode: 'single', sel: 0,
     fSrc: '', fShape: '' };
   const pFind = new Player($('#player-find'));
@@ -23,6 +27,7 @@
       else if (pSong) pSong.audio.pause();
     };
   }
+  function hostOf(u) { try { return new URL(u).hostname.replace(/^www\./, ''); } catch { return 'the source site'; } }
   function segOn(group, btn) { for (const x of group.querySelectorAll('button')) x.classList.toggle('on', x === btn); }
 
   // ---------------------------------------------------------------- data
@@ -57,7 +62,12 @@
     return it.title.replace(/ · (drama|shape)$/, '').replace(' - ', ' – ');
   }
   function subtitle(it) {
-    if (it.source === 'rain') return `${it.n_steps} hours · ${Math.round(it.meta.total_mm).toLocaleString('en-IN')} mm of rain in total`;
+    const m = it.meta;
+    if (it.source === 'rain') return `${it.n_steps} hours · ${Math.round(m.total_mm).toLocaleString('en-IN')} mm of rain in total`;
+    if (it.source === 'energy') return `${it.n_steps} hours · wind from ${m.low_gw} to ${m.peak_gw} GW · Great Britain`;
+    if (it.source === 'machine') return `${m.cycles} operating cycles · tension = wear, from like-new to failure · simulated engine (NASA)`;
+    if (it.source === 'crop') return `${it.n_steps} harvests · tension = how far a harvest falls short`;
+    if (it.source === 'gdp') return `${it.n_steps} ${m.freq === 'quarterly' ? 'quarters' : 'years'} · tension = how eventful the economy was`;
     const a = dmy(it.meta.start), b = dmy(it.meta.end);
     return `${a.m} ${a.y} – ${b.m} ${b.y} · ${it.n_steps} trading days · ` +
       (it.meta.kind === 'drama' ? 'tension = how eventful the market was' : 'tension = the price itself');
@@ -212,12 +222,16 @@
     const labels = c.steps.map(s => s.label), m = c.meta;
     if (it.source === 'stock') return { kind: 'stock', name: m.name, labels };
     if (it.source === 'rain') return { kind: 'rain', name: m.city, labels: labels.map(l => l.slice(5)) };
+    if (it.source === 'energy') return { kind: 'energy', name: 'UK wind', labels, x: c.aux };
+    if (it.source === 'machine') return { kind: 'machine', name: 'Engine ' + m.unit, labels, x: c.aux };
+    if (it.source === 'crop') return { kind: 'crop', name: m.country, labels, x: c.aux };
+    if (it.source === 'gdp') return { kind: 'gdp', name: m.country, labels, x: c.aux, quarterly: m.freq === 'quarterly' };
     return null;
   }
 
   function play() {
     const it = S.item, c = S.curve, aux = c.aux[AUXK[it.source]], tension = c.steps.map(s => s.v);
-    const src = SRC_CREDIT[it.source], board = boardFor(it, c);
+    const src = c.meta.credit ? 'Data: ' + c.meta.credit : SRC_CREDIT[it.source], board = boardFor(it, c);
     const common = { aux, auxKind: AUXK[it.source], tension, board, explain: c.explain };
     if (S.len !== 'full') {
       const s = it.short[S.len][S.sel];
@@ -233,7 +247,7 @@
       const s = it.singles[S.sel];
       pFind.load({ ...common, stepToSec: s.step_to_sec, songCurve: s.song_curve, songT0: s.song_t0,
         audio: s.audio, moments: s.moments.map(m => ({ song_s: m.song_s, label: m.label })),
-        credits: [s.credit, src], nohost: s.audio ? '' : 'This track is in the index only (no audio hosted here). Listen at incompetech.com.' });
+        credits: [s.credit, src], nohost: s.audio ? '' : `This track is in the index only (no audio hosted here). Listen at ${hostOf(s.source_url)}.` });
     }
   }
 
@@ -282,7 +296,7 @@
     const ps = Energy.perSecond(times, energy);
     const q = Match.normalise(ps.values);
     if (!q) throw new Error('This audio is too flat to match.');
-    status('Searching every market moment and storm…');
+    status('Searching every event…');
     const top = await search(q, sources, 6, p => status(`Searching… ${Math.round(100 * p.done / p.n)}%`));
     return { ps, top: top.map(([i, d]) => ({ i, id: S.idx.meta.ids[i], d, pct: Match.matchPct(d, S.calib) })) };
   }
@@ -309,7 +323,7 @@
     const r = res.top[k], c = fromIndex(r.i);
     $('#song-result').hidden = false;
     $('#rev-title').textContent = c.title;
-    $('#rev-pct').innerHTML = `<span class="pct">${r.pct.toFixed(1)}% match</span> · ${{ stock: 'market moment', rain: 'rain event' }[c.source]}`;
+    $('#rev-pct').innerHTML = `<span class="pct">${r.pct.toFixed(1)}% match</span> · ${{ stock: 'market moment', rain: 'rain event', energy: 'week of wind power', machine: 'engine life', crop: 'harvest history', gdp: 'stretch of an economy' }[c.source]}`;
     const al = Match.align(c.tension, res.ps.values, res.ps.t0);
     const n = c.tension.length;
     pSong.load({ aux: c.aux, auxKind: c.auxKind, tension: c.tension, stepToSec: al.stepToSec, songCurve: Array.from(res.ps.values),

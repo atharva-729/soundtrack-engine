@@ -1,0 +1,157 @@
+=== index_library 11:21:21
+50/716  62s
+100/716  62s
+150/716  62s
+200/716  62s
+250/716  62s
+300/716  62s
+350/716  62s
+400/716  62s
+450/716  62s
+500/716  62s
+550/716  62s
+600/716  62s
+650/716  62s
+700/716  64s
+indexed 716 tracks in 80s; failed 0
+=== selftest_match 11:22:42
+test1 50/50 test2 20/20; flagged ['km_spazzmatica_polka']; distinct top1 138
+=== showcase 11:25:53
+matched + stitched 25 items in 239s
+hosted tracks 22; audio total 175 MB
+stitched wins 24/24
+=== short_versions 14:37:36
+nifty_covid_drama            10s  Junkyard Tribe 0.032 | Yallahs 0.036 | Adding the Sun 0.037
+nifty_covid_drama            30s  Blue Sizzle 0.023 | Tragic Overture: Tragi 0.024 | Hebrides Overture Fing 0.024
+reliance_2008_drama          10s  Brittle Rille 0.028 | Broken Reality 0.047 | Del Rio Bravo 0.063
+reliance_2008_drama          30s  Sneaky Snitch 0.043 | Zanzibar 0.045 | Lightless Dawn 0.058
+infy_2019_20_drama           10s  Infados 0.078 | Zombie Chase 0.098 | The Way Out 0.098
+infy_2019_20_drama           30s  Laser Groove 0.059 | Professor Umlaut 0.081 | Cool Rock 0.083
+adanient_2023q1_drama        10s  Sax, Rock, and Roll 0.013 | 1. Prelude - L.75 0.017 | Up on a Housetop 0.022
+adanient_2023q1_drama        30s  Cryptic Sorrow 0.009 | Brandenburg Concerto N 0.011 | Le Grand Chase 0.011
+tcs_last12_shape             10s  Carnivale Intrigue 0.011 | Wagon Wheel 0.023 | Symphony No. 1 in C Mi 0.025
+tcs_last12_shape             30s  09 - Le Coucou au fond 0.015 | Symphony No. 2 in D Ma 0.018 | Symphony No. 6 in B mi 0.020
+reliance_last12_shape        10s  Symphony No. 3 in F Ma 0.046 | Hidden Wonders 0.047 | Fox Tale Waltz Part 1 0.053
+reliance_last12_shape        30s  Summer - 1. Movement - 0.029 | Pachelbel - Canon in D 0.038 | Tafi Maradi no voice 0.039
+hdfcbank_last12_shape        10s  Egmont Overture Op. 84 0.015 | Rumination 0.015 | Casa Bossa Nova 0.018
+hdfcbank_last12_shape        30s  Symphony No. 3 in F Ma 0.015 | Symphony No. 3 in A Mi 0.016 | Gymnopedie No. 2 0.019
+rain_mumbai_2005             10s  Clash Defiant 0.085 | Bushwick Tarantella 0.099 | Sidewalk Shade 0.103
+rain_mumbai_2005             30s  Symphony No. 2 in D Ma 0.051 | Shades of Spring 0.066 | Symphony No. 3 in F Ma 0.076
+rain_chennai_2015            10s  Disco Medusae 0.092 | Grand Dark Waltz Alleg 0.100 | Symphony No. 3 in F Ma 0.100
+rain_chennai_2015            30s  Super Power Cool Dude 0.042 | Hit the Streets 0.092 | Virtutes Vocis 0.093
+rain_delhi_2023              10s  Puccini - Turandot - A 0.568 | District Four 0.578 | Firebrand 0.587
+rain_delhi_2023              30s  Dub Eastern 0.334 | Life of Riley 0.346 | Truth in the Stones 0.377
+rain_kochi_2018              10s  Thaxted (Holst) 0.071 | Welcome to the Show 0.078 | Lobby Time 0.078
+rain_kochi_2018              30s  Symphony No. 3 in A Mi 0.045 | Symphony No. 4 in E Mi 0.071 | Blue Feather 0.073
+energy_storm_ciaran_2023     10s  No Frills Cumbia 0.078 | Neon Laser Horizon 0.085 | Slow Burn 0.086
+energy_storm_ciaran_2023     30s  Overheat 0.062 | Relent 0.064 | Liszt - Hungarian Rhap 0.066
+energy_storm_isha_2024       10s  Suvaco do Cristo 0.057 | Moon Lounge Omicron Pr 0.063 | Electro Cabello 0.070
+energy_storm_isha_2024       30s  Ghost Story 0.057 | Ghostpocalypse - 5 Apo 0.061 | Tea Roots 0.073
+energy_still_week_2025       10s  Symphony No 40 in G Mi 0.055 | Porch Swing Days - slo 0.057 | Hustle 0.071
+energy_still_week_2025       30s  Overworld 0.040 | Tchaikovsky - Symphony 0.043 | Chromatic Fuge (Bach B 0.047
+energy_storm_eowyn_2025      10s  The Dread 0.017 | The Show Must Be Go 0.017 | Gagool 0.018
+energy_storm_eowyn_2025      30s  Funkorama 0.012 | Canon in D for Autohar 0.019 | Night on the Docks - P 0.020
+machine_engine_039           10s  Echoes of Time v2 0.001 | Evening of Chaos 0.001 | Romeo and Juliet - Lov 0.001
+machine_engine_039           30s  Peer Gynt Suite No. 1, 0.002 | Russian Easter Festiva 0.004 | Hall of the Mountain K 0.009
+machine_engine_068           10s  Symphony No. 4 in A Ma 0.001 | Symphony No. 3 in E Fl 0.001 | 14 - Finale 0.001
+machine_engine_068           30s  Symphony No. 5 in C Mi 0.004 | Mendelssohn, Felix - V 0.006 | Symphony No. 4 in A Ma 0.006
+machine_engine_069           10s  Symphony No. 1 in C Mi 0.001 | Inexorable 0.001 | Coriolan Overture: Cor 0.001
+machine_engine_069           30s  Symphony No. 3 in A Mi 0.009 | Symphony No. 40 in G M 0.010 | Rachmaninoff - Piano C 0.011
+crop_ind_1961_2024           10s  Journey To Ascend 0.435 | Symphony No. 4 in E Mi 0.465 | Deck the Halls A 0.485
+crop_ind_1961_2024           30s  Who Likes to Party 0.131 | Style Funk 0.177 | Willow and the Light 0.189
+crop_aus_1961_2024           10s  Killing Time 0.229 | Happy Bee 0.313 | Cool Rock 0.271
+crop_aus_1961_2024           30s  Easy Lemon 0.148 | Unter Donner und Blitz 0.158 | Moorland 0.164
+crop_usa_1961_2024           10s  Sancho Panza gets a La 0.354 | Ready Aim Fire 0.409 | Tenebrous Brothers Car 0.421
+crop_usa_1961_2024           30s  Urban Gauntlet 0.202 | Disco con Tutti 0.263 | Devonshire Waltz Andan 0.263
+gdp_ind_1960_2025            10s  Artifact 0.491 | Chee Zee Lab 0.508 | Thief in the Night 0.515
+gdp_ind_1960_2025            30s  Carefree 0.278 | Stringed Disco 0.309 | Suonatore di Liuto 0.348
+gdp_usa_1970_1985            10s  Satie - Gymnopedie No. 0.245 | Children's Theme 0.247 | Sunshine (version 2) 0.255
+gdp_usa_1970_1985            30s  Somewhere Sunny (ver 2 0.117 | Ghostpocalypse - 6 Cro 0.130 | End of the Era 0.132
+gdp_usa_2000_2015            10s  Whiskey on the Mississ 0.138 | Stealth Groover 0.143 | Digya 0.170
+gdp_usa_2000_2015            30s  Julius Fucik - Entry o 0.086 | Celebration 0.107 | Symphony No. 6 in B mi 0.119
+gdp_usa_2015_2025            10s  Past Sadness 0.149 | Whimsy Groove 0.166 | Happy Bee - Surf 0.168
+gdp_usa_2015_2025            30s  Rock Over London 0.033 | Divertissement - Pizzi 0.053 | Danse Macabre 0.056
+short clips: 150 files, 48.2 MB
+=== make_site 14:45:26
+site data (MB): {'auxseries.bin': 0.12, 'calib.json': 0.0, 'hosted.json': 0.0, 'hosted_lib.json': 0.11, 'index.bin': 0.12, 'index_meta.json': 0.19, 'library.json': 0.14, 'showcase.json': 0.65, 'test_trials.json': 0.1}
+=== make_test 14:45:38
+25 trial curves, 50 clips, 32.0 MB
+=== make_test_tone 14:46:25
+site/test/test_tone.wav
+=== site_check 14:46:26
+{
+ "console_errors": [],
+ "test_tone_result": "ICICI Bank 2023 \u00b7 shape",
+ "playhead": {
+  "audio_time_after_2_5s": 2.47,
+  "seek_value": "82",
+  "moves": true
+ },
+ "short_clip": {
+  "len": "30",
+  "duration": 30
+ },
+ "blind_test": {
+  "trials": 12,
+  "answers": 12,
+  "score_text": "3 of 12"
+ },
+ "parity": {
+  "python_top5": [
+   [
+    "icicibank_2023_shape",
+    0.1499533280238656
+   ],
+   [
+    "nifty50_2023_shape",
+    0.15886702609730338
+   ],
+   [
+    "infy_2018_shape",
+    0.18233010103279101
+   ],
+   [
+    "energy_week_2024-09-23",
+    0.19708794722313536
+   ],
+   [
+    "nifty50_2024_shape",
+    0.19957586121597576
+   ]
+  ],
+  "js_top5": [
+   [
+    "icicibank_2023_shape",
+    0.1499532835872647
+   ],
+   [
+    "nifty50_2023_shape",
+    0.15886702647840653
+   ],
+   [
+    "infy_2018_shape",
+    0.18233005932229582
+   ],
+   [
+    "energy_week_2024-09-23",
+    0.19708788659243132
+   ],
+   [
+    "nifty50_2024_shape",
+    0.19957581940720429
+   ]
+  ],
+  "top5_match": true,
+  "curve_len_py_js": [
+   120,
+   120
+  ],
+  "curve_max_abs_diff": 1.5547817677763476e-06,
+  "t0_py_js": [
+   0.0464,
+   0.0464
+  ]
+ }
+}
+screens: 12
+=== done 14:47:51

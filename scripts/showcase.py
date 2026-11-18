@@ -27,8 +27,13 @@ SHOWCASE = [
     ("stock", "adanient_2023q1_drama"), ("stock", "tcs_last12_shape"), ("stock", "reliance_last12_shape"),
     ("stock", "hdfcbank_last12_shape"),
     ("rain", "rain_mumbai_2005"), ("rain", "rain_chennai_2015"), ("rain", "rain_delhi_2023"), ("rain", "rain_kochi_2018"),
+    ("energy", "energy_storm_ciaran_2023"), ("energy", "energy_storm_isha_2024"), ("energy", "energy_still_week_2025"),
+    ("energy", "energy_storm_eowyn_2025"),
+    ("machine", "machine_engine_039"), ("machine", "machine_engine_068"), ("machine", "machine_engine_069"),
+    ("crop", "crop_ind_1961_2024"), ("crop", "crop_aus_1961_2024"), ("crop", "crop_usa_1961_2024"),
+    ("gdp", "gdp_ind_1960_2025"), ("gdp", "gdp_usa_1970_1985"), ("gdp", "gdp_usa_2000_2015"), ("gdp", "gdp_usa_2015_2025"),
 ]
-AUX = {"stock": "price", "rain": "mm"}
+AUX = C.AUX_KEY
 
 
 def tracks():
@@ -132,7 +137,8 @@ def transcode(tid, rows):
     out = AUDIO / f"{tid}.mp3"
     if not out.exists():
         subprocess.run(["ffmpeg", "-y", "-loglevel", "error", "-i", str(ROOT / rows[tid]["file"]), "-map_metadata", "-1",
-                        "-metadata", f"title={rows[tid]['title']}", "-metadata", "artist=Kevin MacLeod (incompetech.com), CC BY 4.0",
+                        "-metadata", f"title={rows[tid]['title']}", "-metadata", f"artist={rows[tid]['artist']}",
+                        "-metadata", f"comment={rows[tid]['credit']}",
                         "-ac", "2", "-b:a", "128k", str(out)], check=True)
     return out.stat().st_size
 
@@ -148,7 +154,7 @@ def main():
     print(f"matched + stitched {len(results)} items in {time.time()-t:.0f}s")
 
     # audio budget (< 250 MB): stitched renders + every #1 first, then #2s, then #3s while it fits
-    BUDGET = 215e6
+    BUDGET = 175e6  # leaves room for the 10/30 s clips and the blind-test clips (site total < 250 MB)
     used = sum((AUDIO / f"stitched_{r['id']}.mp3").stat().st_size for r in results if r["stitched"])
     hosted = []
     need = []  # stitched segments are only heard inside the stitched render; host the single-track matches
@@ -165,8 +171,8 @@ def main():
             continue
         used += sz
         hosted.append(tid)
-    for f in AUDIO.glob("km_*.mp3"):
-        if f.stem not in hosted:
+    for f in AUDIO.glob("*.mp3"):  # full-track copies are named by track id; stitched/clip/test files are not
+        if f.stem in rows and f.stem not in hosted:
             f.unlink()
     print(f"hosted tracks {len(hosted)}; audio total {used/1e6:.0f} MB")
 
@@ -179,6 +185,7 @@ def main():
         for s in r["singles"]:
             row = rows[s["track"]]
             s.update({"title": row["title"], "credit": row["credit"], "licence": row["licence"],
+                      "source_url": row.get("source_url", ""),
                       "audio": f"audio/{s['track']}.mp3" if s["track"] in hosted else None, "genre": row["genre"], "feel": row["feel"]})
         if r["stitched"]:
             r["stitched"]["titles"] = [rows[seg["track"]]["title"] for seg in r["stitched"]["segments"]]

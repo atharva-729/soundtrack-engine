@@ -11,9 +11,17 @@ Local preview with working audio seeking: `python scripts/serve.py` → http://l
 and a credit line. classicals.de pieces not added yet (drop them in `library/raw/classicals/` + a `tracks.csv` row).
 
 ## 3. Curves
-Stocks 354 (NSE via EOD2; 7 showcase periods) and rain 9 events (Open-Meteo; 4 showcase). Sports were taken out of
-this project (they live in a separate project); the matcher and stitcher are source-agnostic, so any time series
-can be added as an adapter.
+Six sources, all public data:
+- **Stocks:** 354 curves (NSE via EOD2), 7 on show.
+- **Rain:** 9 events (Open-Meteo), 4 on show.
+- **Energy:** 57 weeks of GB wind power (Elexon), 4 on show (Storms Ciarán, Isha, Éowyn and the still week of
+  Jan 2025).
+- **Machines:** 100 NASA jet engines run to failure, 3 on show (shortest, typical and longest life).
+- **Crops:** 30 countries' cereal yield since 1961 (World Bank), 3 on show (India, Australia, US).
+- **Economy:** 47 GDP curves (World Bank annual plus US quarterly from FRED), 4 on show (India since 1960, and the
+  US through the oil shocks, the Great Recession and COVID).
+
+Sports were taken out of this project, because they live in a separate project.
 
 ## 4. IPL model
 Not built (sports out of scope here).

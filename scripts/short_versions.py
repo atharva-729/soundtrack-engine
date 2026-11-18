@@ -19,6 +19,7 @@ import numpy as np
 
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT))
+from adapters import energy, fred, machine, worldbank  # noqa: E402
 from adapters import rain as rain_adapter  # noqa: E402
 from adapters import stock as stock_adapter  # noqa: E402
 from engine import curves as C  # noqa: E402
@@ -30,7 +31,9 @@ OUT = SITE / "audio" / "short"
 LENGTHS = {10: 2, 30: 3}  # clip length (s) -> number of moments to flag
 TOPK = 3
 REUSE_PEN = 0.05  # nudge away from tracks already used by another item (either length)
-EXPLAIN = {"stock": stock_adapter.explain, "rain": rain_adapter.explain}
+EXPLAIN = {"stock": stock_adapter.explain, "rain": rain_adapter.explain, "energy": energy.explain,
+           "machine": machine.explain, "crop": worldbank.explain,
+           "gdp": lambda c: (fred.explain if c["meta"].get("freq") == "quarterly" else worldbank.explain)(c)}
 
 
 def window_cost(q, ti, cs, L):
